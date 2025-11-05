@@ -244,36 +244,6 @@
             background-color: #e3f2fd;
         }
 
-        .itinerary-container {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 10px;
-            background: #f8f9fa;
-        }
-
-        .itinerary-day {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .itinerary-day-header {
-            font-weight: bold;
-            color: #1a2a6c;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-        }
-
-        .itinerary-day-content {
-            font-size: 0.9em;
-            color: #495057;
-        }
-
         .route-order {
             background: #ff4444;
             color: white;
@@ -309,6 +279,20 @@
             margin-top: 5px;
             display: inline-block;
         }
+        
+        .clean-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .clean-buttons .btn {
+            flex: 1;
+        }
+        
+        .city-in-route {
+            border-left: 4px solid #28a745;
+        }
     </style>
 </head>
 
@@ -317,18 +301,28 @@
         <div class="row">
             <!-- Panel de Control -->
             <div class="col-lg-4">
-                <!-- Itinerario -->
+                <!-- Gestor de Rutas -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-route me-2"></i>Itinerario del Viaje</h5>
+                        <h5 class="mb-0"><i class="fas fa-route me-2"></i>Gestión de Rutas</h5>
                     </div>
                     <div class="card-body">
-                        <div class="itinerary-container" id="itinerary-container">
-                            <!-- Se llena dinámicamente -->
+                        <div class="clean-buttons">
+                            <button class="btn btn-outline-warning" onclick="clearLandRoutes()">
+                                <i class="fas fa-trash me-2"></i>Limpiar Rutas Terrestres
+                            </button>
+                            <button class="btn btn-outline-warning" onclick="clearFlightRoutes()">
+                                <i class="fas fa-trash me-2"></i>Limpiar Vuelos
+                            </button>
                         </div>
-                        <button class="btn btn-primary btn-sm w-100 mt-3" onclick="loadItineraryFromJSON()">
-                            <i class="fas fa-upload me-2"></i>Cargar Itinerario
-                        </button>
+                        <div class="clean-buttons">
+                            <button class="btn btn-outline-warning" onclick="clearMaritimeRoutes()">
+                                <i class="fas fa-trash me-2"></i>Limpiar Rutas Marítimas
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="clearAllRoutes()">
+                                <i class="fas fa-broom me-2"></i>Limpiar Todas las Rutas
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -366,38 +360,6 @@
                         <div class="drag-container" id="cities-container" ondrop="dropInContainer(event, 'city')"
                             ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
                             Arrastra ciudades aquí o crea nuevas
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gestor de Iconos -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-icons me-2"></i>Gestor de Iconos</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="icon-manager">
-                            <div class="mb-3">
-                                <label class="form-label">Agregar Nuevo Icono</label>
-                                <div class="custom-icon-input">
-                                    <input type="text" class="form-control" id="newIconName"
-                                        placeholder="Nombre del icono">
-                                    <input type="text" class="form-control" id="newIconFile"
-                                        placeholder="Archivo (ej: tren.png)">
-                                    <button class="btn btn-primary btn-sm" onclick="addCustomIcon()">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Iconos Disponibles</label>
-                                <div class="icon-selector" id="customIconsContainer">
-                                    <!-- Se llena dinámicamente -->
-                                </div>
-                            </div>
-                            <button class="btn btn-outline-secondary btn-sm w-100" onclick="clearCustomIcons()">
-                                <i class="fas fa-trash me-2"></i>Limpiar Iconos
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -617,12 +579,6 @@
                         <label class="form-label">Color</label>
                         <input type="color" class="form-control" id="countryColor" value="#4a6fa5">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Icono del País</label>
-                        <div class="icon-selector" id="countryIconSelector">
-                            <!-- Se llena dinámicamente -->
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -720,9 +676,8 @@
         let currentLandRouteCities = [];
         let currentFlightCities = [];
         let currentMaritimeRouteCities = [];
-        let customIcons = {};
         let customEmojis = {};
-        let itinerary = [];
+        let routeIndexCounter = 1;
 
         // Inicializar mapa
         function initMap() {
@@ -732,42 +687,53 @@
             }).addTo(map);
         }
 
-        // Sistema de iconos locales (para medios de transporte)
+        // Sistema de iconos simplificado para medios de transporte
         function loadCustomIcons() {
-            const savedIcons = localStorage.getItem('mapGeneratorCustomIcons');
-            if (savedIcons) {
-                customIcons = JSON.parse(savedIcons);
-            } else {
-                // Iconos por defecto para medios de transporte - rutas corregidas
-                customIcons = {
-                    'autobus': 'iconos/autobus.png',
-                    'barco': 'iconos/barco.png',
-                    'chepe': 'iconos/chepe.png',
-                    'crucero': 'iconos/crucero.png',
-                    'ferry': 'iconos/ferry.png',
-                    'gondola': 'iconos/gondola.png',
-                    'lancha': 'iconos/lancha.png',
-                    'teleferico': 'iconos/teleferico.png',
-                    'tren-alta-velocidad': 'iconos/tren-alta-velocidad.png',
-                    'tren-transiberiano': 'iconos/tren-transiberiano.png',
-                    'trineo': 'iconos/trineo.png',
-                    'vaporeto': 'iconos/vaporeto.png',
-                    'vaporetto': 'iconos/vaporetto.png',
-                    'vuelo': 'iconos/vuelo.png'
-                };
-                saveCustomIcons();
-            }
-            updateIconSelectors();
-            renderCustomIcons();
+            // Solo 3 iconos para los tipos de ruta
+            const transportIcons = {
+                'terrestre': 'iconos/autobus.png',
+                'aereo': 'iconos/vuelo.png',
+                'maritimo': 'iconos/barco.png'
+            };
+            
+            updateTransportSelectors(transportIcons);
         }
 
-        // Sistema de emojis locales (para banderas de países)
+        function updateTransportSelectors(icons) {
+            const landSelect = document.getElementById('landTransportType');
+            const flightSelect = document.getElementById('flightTransportType');
+            const maritimeSelect = document.getElementById('maritimeTransportType');
+
+            // Limpiar selectores
+            landSelect.innerHTML = '';
+            flightSelect.innerHTML = '';
+            maritimeSelect.innerHTML = '';
+
+            // Agregar opciones para cada tipo de ruta
+            Object.keys(icons).forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                option.dataset.icon = icons[type];
+
+                // Asignar a los selectores correspondientes
+                if (type === 'terrestre') {
+                    landSelect.appendChild(option);
+                } else if (type === 'aereo') {
+                    flightSelect.appendChild(option);
+                } else if (type === 'maritimo') {
+                    maritimeSelect.appendChild(option);
+                }
+            });
+        }
+
+        // Sistema de emojis para banderas de países
         function loadCustomEmojis() {
             const savedEmojis = localStorage.getItem('mapGeneratorCustomEmojis');
             if (savedEmojis) {
                 customEmojis = JSON.parse(savedEmojis);
             } else {
-                // Emojis por defecto para banderas - rutas corregidas
+                // Emojis por defecto para banderas
                 customEmojis = {
                     'mexico': 'banderas/Mexico.ico',
                     'españa': 'banderas/Spain.ico',
@@ -786,32 +752,8 @@
             renderCustomEmojis();
         }
 
-        function saveCustomIcons() {
-            localStorage.setItem('mapGeneratorCustomIcons', JSON.stringify(customIcons));
-        }
-
         function saveCustomEmojis() {
             localStorage.setItem('mapGeneratorCustomEmojis', JSON.stringify(customEmojis));
-        }
-
-        function addCustomIcon() {
-            const name = document.getElementById('newIconName').value.trim();
-            const file = document.getElementById('newIconFile').value.trim();
-
-            if (!name || !file) {
-                alert('Por favor ingresa nombre y archivo del icono');
-                return;
-            }
-
-            customIcons[name] = file;
-            saveCustomIcons();
-            updateIconSelectors();
-            renderCustomIcons();
-
-            document.getElementById('newIconName').value = '';
-            document.getElementById('newIconFile').value = '';
-
-            alert(`Icono "${name}" agregado correctamente`);
         }
 
         function addCustomEmoji() {
@@ -834,15 +776,6 @@
             alert(`Emoji "${name}" agregado correctamente`);
         }
 
-        function clearCustomIcons() {
-            if (confirm('¿Estás seguro de que quieres eliminar todos los iconos personalizados?')) {
-                customIcons = {};
-                saveCustomIcons();
-                updateIconSelectors();
-                renderCustomIcons();
-            }
-        }
-
         function clearCustomEmojis() {
             if (confirm('¿Estás seguro de que quieres eliminar todos los emojis personalizados?')) {
                 customEmojis = {};
@@ -852,15 +785,6 @@
             }
         }
 
-        function renderCustomIcons() {
-            const container = document.getElementById('customIconsContainer');
-            container.innerHTML = Object.keys(customIcons).map(name => `
-                <div class="icon-option" title="${name}">
-                    <img src="${customIcons[name]}" alt="${name}" class="icon-preview-img">
-                </div>
-            `).join('');
-        }
-
         function renderCustomEmojis() {
             const container = document.getElementById('customEmojisContainer');
             container.innerHTML = Object.keys(customEmojis).map(name => `
@@ -868,43 +792,6 @@
                     <img src="${customEmojis[name]}" alt="${name}" class="icon-preview-img">
                 </div>
             `).join('');
-        }
-
-        function updateIconSelectors() {
-            const landSelect = document.getElementById('landTransportType');
-            const flightSelect = document.getElementById('flightTransportType');
-            const maritimeSelect = document.getElementById('maritimeTransportType');
-            const countryIconSelector = document.getElementById('countryIconSelector');
-
-            landSelect.innerHTML = '';
-            flightSelect.innerHTML = '';
-            maritimeSelect.innerHTML = '';
-            countryIconSelector.innerHTML = '';
-
-            Object.keys(customIcons).forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                option.dataset.icon = customIcons[name];
-
-                // Clasificar iconos por tipo de transporte
-                if (name.includes('vuelo')) {
-                    flightSelect.appendChild(option.cloneNode(true));
-                } else if (name.includes('barco') || name.includes('ferry') || name.includes('lancha') ||
-                    name.includes('crucero') || name.includes('vaporeto')) {
-                    maritimeSelect.appendChild(option.cloneNode(true));
-                } else {
-                    landSelect.appendChild(option);
-                }
-
-                // Agregar al selector de iconos de países
-                const iconOption = document.createElement('div');
-                iconOption.className = 'icon-option';
-                iconOption.onclick = function () { selectIcon(this, customIcons[name], name); };
-                iconOption.innerHTML = `<img src="${customIcons[name]}" alt="${name}" class="icon-preview-img">`;
-                iconOption.dataset.iconName = name;
-                countryIconSelector.appendChild(iconOption);
-            });
         }
 
         function updateEmojiSelectors() {
@@ -921,15 +808,6 @@
             });
         }
 
-        function selectIcon(element, iconFile, iconName) {
-            document.querySelectorAll('#countryIconSelector .icon-option').forEach(icon => {
-                icon.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            element.dataset.selectedIcon = iconFile;
-            element.dataset.selectedIconName = iconName;
-        }
-
         function selectEmoji(element, emojiFile, emojiName) {
             document.querySelectorAll('#countryEmojiSelector .emoji-option').forEach(emoji => {
                 emoji.classList.remove('selected');
@@ -939,14 +817,14 @@
             element.dataset.selectedEmojiName = emojiName;
         }
 
-        // Funciones para países con emojis e iconos
+        // Funciones para países con emojis
         function showCountryModal() {
             document.getElementById('countryId').value = '';
             document.getElementById('countryName').value = '';
             document.getElementById('countryColor').value = '#4a6fa5';
 
             // Limpiar selecciones
-            document.querySelectorAll('.icon-option.selected, .emoji-option.selected').forEach(el => {
+            document.querySelectorAll('.emoji-option.selected').forEach(el => {
                 el.classList.remove('selected');
             });
 
@@ -963,11 +841,6 @@
             const emojiFile = selectedEmoji ? selectedEmoji.dataset.selectedEmoji : '';
             const emojiName = selectedEmoji ? selectedEmoji.dataset.selectedEmojiName : '';
 
-            // Obtener icono seleccionado
-            const selectedIcon = document.querySelector('#countryIconSelector .icon-option.selected');
-            const iconFile = selectedIcon ? selectedIcon.dataset.selectedIcon : '';
-            const iconName = selectedIcon ? selectedIcon.dataset.selectedIconName : '';
-
             if (!id || !name) {
                 alert('Por favor completa todos los campos');
                 return;
@@ -979,9 +852,7 @@
                 emojiName: emojiName, // Guardamos el nombre del emoji
                 buttonText: name.substring(0, 10),
                 layerText: name,
-                color: color,
-                iconUrl: iconFile, // Guardamos el archivo del icono
-                iconName: iconName // Guardamos el nombre del icono
+                color: color
             };
 
             renderCountries();
@@ -989,7 +860,7 @@
             updateStatistics();
         }
 
-        // Funciones para rutas con iconos personalizados
+        // Funciones para rutas con iconos simplificados
         function createLandRoute() {
             if (currentLandRouteCities.length < 2) {
                 alert('Se necesitan al menos 2 ciudades para crear una ruta terrestre');
@@ -1007,7 +878,8 @@
                 coordinates: coordinates,
                 transportType: transportType,
                 transportIcon: transportIcon,
-                tooltip: `Ruta terrestre: ${cityNames.join(' → ')}`
+                tooltip: `Ruta terrestre: ${cityNames.join(' → ')}`,
+                index: routeIndexCounter++
             };
 
             routes.push(route);
@@ -1016,6 +888,7 @@
             updateMap();
             saveRoutesToDB(); // Guardar automáticamente
             updateStatistics();
+            renderCities(); // Actualizar visualización de ciudades
         }
 
         function createFlightRoute() {
@@ -1036,7 +909,8 @@
                 coordinates: coordinates,
                 transportType: transportType,
                 transportIcon: transportIcon,
-                tooltip: `Vuelo: ${fromCity.name} → ${toCity.name}`
+                tooltip: `Vuelo: ${fromCity.name} → ${toCity.name}`,
+                index: routeIndexCounter++
             };
 
             flights.push(flight);
@@ -1045,6 +919,7 @@
             updateMap();
             saveRoutesToDB(); // Guardar automáticamente
             updateStatistics();
+            renderCities(); // Actualizar visualización de ciudades
         }
 
         function createMaritimeRoute() {
@@ -1064,7 +939,8 @@
                 coordinates: coordinates,
                 transportType: transportType,
                 transportIcon: transportIcon,
-                tooltip: `Ruta marítima: ${cityNames.join(' → ')}`
+                tooltip: `Ruta marítima: ${cityNames.join(' → ')}`,
+                index: routeIndexCounter++
             };
 
             maritimeRoutes.push(maritimeRoute);
@@ -1073,9 +949,10 @@
             updateMap();
             saveRoutesToDB(); // Guardar automáticamente
             updateStatistics();
+            renderCities(); // Actualizar visualización de ciudades
         }
 
-        // Renderizado de países con emojis e iconos
+        // Renderizado de países con emojis
         function renderCountries() {
             const container = document.getElementById('countries-container');
             container.innerHTML = Object.keys(countries).map(key => {
@@ -1083,14 +960,10 @@
                 const emojiHtml = country.emoji ?
                     `<img src="${country.emoji}" alt="${country.emojiName}" class="icon-preview-img">` :
                     '🏳️';
-                const iconHtml = country.iconUrl ?
-                    `<img src="${country.iconUrl}" alt="${country.iconName}" class="icon-preview-img">` :
-                    '';
 
                 return `
                 <div class="draggable-item" draggable="true" ondragstart="dragStart(event, 'country', '${key}')" ondragend="dragEnd(event)">
                     ${emojiHtml}
-                    ${iconHtml}
                     <span class="color-badge" style="background-color: ${country.color}"></span>
                     <strong>${country.name}</strong>
                     <br><small>ID: ${key}</small>
@@ -1288,21 +1161,51 @@
             updateStatistics();
         }
 
-        // Renderizado
+        // Renderizado de ciudades
         function renderCities() {
             const container = document.getElementById('cities-container');
             container.innerHTML = cities.map(city => {
+                const isInRoute = isCityInAnyRoute(city);
+                const cityClass = isInRoute ? 'city-in-route' : '';
+                
                 return `
-                <div class="draggable-item" draggable="true" ondragstart="dragStart(event, 'city', '${city.id}')" ondragend="dragEnd(event)">
+                <div class="draggable-item ${cityClass}" draggable="true" ondragstart="dragStart(event, 'city', '${city.id}')" ondragend="dragEnd(event)">
                     <strong>${city.name}</strong>
                     <span class="badge" style="background-color: ${getCountryColor(city.type)}">${getCountryEmoji(city.type)}</span>
                     <br>
                     <small>${city.coords[0].toFixed(4)}, ${city.coords[1].toFixed(4)}</small>
+                    ${isInRoute ? '<span class="badge bg-success ms-2">En ruta</span>' : ''}
                     <button class="btn btn-sm btn-outline-danger delete-btn" onclick="deleteCity('${city.id}')">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             `}).join('');
+        }
+
+        // Función para verificar si una ciudad está en alguna ruta
+        function isCityInAnyRoute(city) {
+            // Verificar en rutas terrestres
+            const inLandRoute = routes.some(route => 
+                route.coordinates.some(coord => 
+                    coord[0] === city.coords[0] && coord[1] === city.coords[1]
+                )
+            );
+            
+            // Verificar en vuelos
+            const inFlight = flights.some(flight => 
+                flight.coordinates.some(coord => 
+                    coord[0] === city.coords[0] && coord[1] === city.coords[1]
+                )
+            );
+            
+            // Verificar en rutas marítimas
+            const inMaritimeRoute = maritimeRoutes.some(route => 
+                route.coordinates.some(coord => 
+                    coord[0] === city.coords[0] && coord[1] === city.coords[1]
+                )
+            );
+            
+            return inLandRoute || inFlight || inMaritimeRoute;
         }
 
         // Funciones de eliminación
@@ -1325,7 +1228,7 @@
             updateStatistics();
         }
 
-        // Actualizar mapa
+        // Actualizar mapa - SOLO muestra ciudades que están en rutas
         function updateMap() {
             // Limpiar mapa
             map.eachLayer(layer => {
@@ -1334,39 +1237,26 @@
                 }
             });
 
-            // Obtener el orden de las ciudades según el itinerario
-            const cityOrder = getCityItineraryOrder();
+            // Obtener ciudades que están en rutas
+            const citiesInRoutes = getCitiesInRoutes();
 
-            // Agregar marcadores de ciudades con números de orden
-            cities.forEach(city => {
+            // Agregar marcadores de ciudades que están en rutas
+            citiesInRoutes.forEach(city => {
                 const country = countries[city.type];
                 if (country) {
-                    const orderNumber = cityOrder[city.name] || '';
-                    
-                    let icon;
-                    if (country.iconUrl) {
-                        icon = L.icon({
-                            iconUrl: country.iconUrl,
-                            iconSize: [25, 25],
-                            iconAnchor: [12, 12],
-                            popupAnchor: [0, -12]
-                        });
-                    } else {
-                        icon = L.icon({
-                            iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                            iconSize: [25, 25],
-                            iconAnchor: [12, 12],
-                            popupAnchor: [0, -12]
-                        });
-                    }
+                    const icon = L.icon({
+                        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                        iconSize: [25, 25],
+                        iconAnchor: [12, 12],
+                        popupAnchor: [0, -12]
+                    });
 
                     const marker = L.marker(city.coords, { icon: icon }).addTo(map)
                         .bindPopup(`
                             <div class="popup-title" style="border-left-color: ${country.color};">
-                                ${orderNumber ? `<span class="route-order">${orderNumber}</span>` : ''}
                                 <strong>${city.name}</strong>
                             </div>
-                            <div class="popup-country" style="background: ${country.color};">${country.name}</div>
+                            <div class="popup-country" style="background: ${country.color};">${getCountryEmojiDisplay(city.type)} ${country.name}</div>
                             <div>${city.description || 'Sin descripción'}</div>
                         `);
                 }
@@ -1376,37 +1266,129 @@
             routes.forEach(route => {
                 if (route.coordinates.length >= 2) {
                     const color = route.color || '#666666';
-                    L.polyline(route.coordinates, {
+                    const polyline = L.polyline(route.coordinates, {
                         color: color,
                         weight: 5,
                         opacity: 0.8
                     }).addTo(map).bindTooltip(route.tooltip);
+                    
+                    // Agregar número de índice a la ruta
+                    if (route.index) {
+                        const midPoint = getMidPoint(route.coordinates);
+                        L.marker(midPoint, {
+                            icon: L.divIcon({
+                                className: 'route-index-marker',
+                                html: `<div class="route-order">${route.index}</div>`,
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 12]
+                            })
+                        }).addTo(map);
+                    }
                 }
             });
 
             // Agregar vuelos
             flights.forEach(flight => {
                 if (flight.coordinates.length === 2) {
-                    L.polyline(flight.coordinates, {
+                    const polyline = L.polyline(flight.coordinates, {
                         color: '#6a0dad',
                         weight: 3,
                         opacity: 0.6,
                         dashArray: '10, 10'
                     }).addTo(map).bindTooltip(flight.tooltip);
+                    
+                    // Agregar número de índice al vuelo
+                    if (flight.index) {
+                        const midPoint = getMidPoint(flight.coordinates);
+                        L.marker(midPoint, {
+                            icon: L.divIcon({
+                                className: 'route-index-marker',
+                                html: `<div class="route-order">${flight.index}</div>`,
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 12]
+                            })
+                        }).addTo(map);
+                    }
                 }
             });
 
             // Agregar rutas marítimas
             maritimeRoutes.forEach(route => {
                 if (route.coordinates.length >= 2) {
-                    L.polyline(route.coordinates, {
+                    const polyline = L.polyline(route.coordinates, {
                         color: '#17a2b8',
                         weight: 4,
                         opacity: 0.7,
                         dashArray: '5, 10'
                     }).addTo(map).bindTooltip(route.tooltip);
+                    
+                    // Agregar número de índice a la ruta marítima
+                    if (route.index) {
+                        const midPoint = getMidPoint(route.coordinates);
+                        L.marker(midPoint, {
+                            icon: L.divIcon({
+                                className: 'route-index-marker',
+                                html: `<div class="route-order">${route.index}</div>`,
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 12]
+                            })
+                        }).addTo(map);
+                    }
                 }
             });
+        }
+
+        // Función para obtener las ciudades que están en rutas
+        function getCitiesInRoutes() {
+            const citiesInRoutes = [];
+            
+            // Agregar ciudades de rutas terrestres
+            routes.forEach(route => {
+                route.coordinates.forEach(coord => {
+                    const city = cities.find(c => 
+                        c.coords[0] === coord[0] && c.coords[1] === coord[1]
+                    );
+                    if (city && !citiesInRoutes.find(c => c.id === city.id)) {
+                        citiesInRoutes.push(city);
+                    }
+                });
+            });
+            
+            // Agregar ciudades de vuelos
+            flights.forEach(flight => {
+                flight.coordinates.forEach(coord => {
+                    const city = cities.find(c => 
+                        c.coords[0] === coord[0] && c.coords[1] === coord[1]
+                    );
+                    if (city && !citiesInRoutes.find(c => c.id === city.id)) {
+                        citiesInRoutes.push(city);
+                    }
+                });
+            });
+            
+            // Agregar ciudades de rutas marítimas
+            maritimeRoutes.forEach(route => {
+                route.coordinates.forEach(coord => {
+                    const city = cities.find(c => 
+                        c.coords[0] === coord[0] && c.coords[1] === coord[1]
+                    );
+                    if (city && !citiesInRoutes.find(c => c.id === city.id)) {
+                        citiesInRoutes.push(city);
+                    }
+                });
+            });
+            
+            return citiesInRoutes;
+        }
+
+        // Función para calcular el punto medio de una ruta
+        function getMidPoint(coordinates) {
+            if (coordinates.length === 0) return [0, 0];
+            
+            const sumLat = coordinates.reduce((sum, coord) => sum + coord[0], 0);
+            const sumLng = coordinates.reduce((sum, coord) => sum + coord[1], 0);
+            
+            return [sumLat / coordinates.length, sumLng / coordinates.length];
         }
 
         function updateMapView() {
@@ -1442,6 +1424,54 @@
             document.getElementById('routesCount').textContent = routes.length + flights.length + maritimeRoutes.length;
         }
 
+        // Funciones para limpiar rutas
+        function clearLandRoutes() {
+            if (confirm('¿Estás seguro de que quieres eliminar todas las rutas terrestres?')) {
+                routes = [];
+                updateMap();
+                saveRoutesToDB();
+                updateStatistics();
+                renderCities();
+                alert('Rutas terrestres eliminadas');
+            }
+        }
+
+        function clearFlightRoutes() {
+            if (confirm('¿Estás seguro de que quieres eliminar todos los vuelos?')) {
+                flights = [];
+                updateMap();
+                saveRoutesToDB();
+                updateStatistics();
+                renderCities();
+                alert('Vuelos eliminados');
+            }
+        }
+
+        function clearMaritimeRoutes() {
+            if (confirm('¿Estás seguro de que quieres eliminar todas las rutas marítimas?')) {
+                maritimeRoutes = [];
+                updateMap();
+                saveRoutesToDB();
+                updateStatistics();
+                renderCities();
+                alert('Rutas marítimas eliminadas');
+            }
+        }
+
+        function clearAllRoutes() {
+            if (confirm('¿Estás seguro de que quieres eliminar TODAS las rutas?')) {
+                routes = [];
+                flights = [];
+                maritimeRoutes = [];
+                routeIndexCounter = 1;
+                updateMap();
+                saveRoutesToDB();
+                updateStatistics();
+                renderCities();
+                alert('Todas las rutas han sido eliminadas');
+            }
+        }
+
         // Generar JSON
         function generateJSON() {
             const config = {
@@ -1474,9 +1504,7 @@
                     emojiName: countries[key].emojiName,
                     buttonText: countries[key].buttonText,
                     layerText: countries[key].layerText,
-                    color: countries[key].color,
-                    iconUrl: countries[key].iconUrl,
-                    iconName: countries[key].iconName
+                    color: countries[key].color
                 };
             });
 
@@ -1492,8 +1520,7 @@
                 })),
                 routes: routes,
                 flights: flights,
-                maritimeRoutes: maritimeRoutes,
-                itinerary: itinerary
+                maritimeRoutes: maritimeRoutes
             };
 
             document.getElementById('jsonOutput').textContent = JSON.stringify(finalJSON, null, 2);
@@ -1546,15 +1573,20 @@
                 if (data.flights) flights = data.flights;
                 if (data.maritimeRoutes) maritimeRoutes = data.maritimeRoutes;
                 
-                // Cargar itinerario
-                if (data.itinerary) itinerary = data.itinerary;
+                // Actualizar contador de índices
+                routeIndexCounter = 1;
+                const allRoutes = [...routes, ...flights, ...maritimeRoutes];
+                allRoutes.forEach(route => {
+                    if (route.index && route.index >= routeIndexCounter) {
+                        routeIndexCounter = route.index + 1;
+                    }
+                });
 
                 // Actualizar interfaz
                 renderCountries();
                 renderCities();
                 updateMap();
                 updateStatistics();
-                renderItinerary();
 
                 bootstrap.Modal.getInstance(document.getElementById('jsonModal')).hide();
                 alert('Datos cargados correctamente desde JSON!');
@@ -1575,9 +1607,7 @@
                     emojiName: countries[key].emojiName,
                     buttonText: countries[key].buttonText,
                     layerText: countries[key].layerText,
-                    color: countries[key].color,
-                    iconUrl: countries[key].iconUrl,
-                    iconName: countries[key].iconName
+                    color: countries[key].color
                 };
             });
 
@@ -1613,7 +1643,7 @@
                 currentLandRouteCities = [];
                 currentFlightCities = [];
                 currentMaritimeRouteCities = [];
-                itinerary = [];
+                routeIndexCounter = 1;
 
                 // Limpiar localStorage
                 localStorage.removeItem('mapGeneratorCities');
@@ -1626,28 +1656,9 @@
                 updateMaritimeRouteVisualizer();
                 updateMap();
                 updateStatistics();
-                renderItinerary();
 
                 document.getElementById('jsonOutput').textContent = '// El JSON se generará aquí...';
             }
-        }
-
-        // Calcular zoom óptimo automáticamente
-        function calculateOptimalZoom() {
-            if (cities.length === 0) {
-                alert('No hay ciudades para calcular el zoom');
-                return;
-            }
-
-            const group = L.featureGroup(
-                cities.map(city => L.marker(city.coords))
-            );
-
-            const bounds = group.getBounds();
-            map.fitBounds(bounds, { padding: [50, 50] });
-
-            const optimalZoom = map.getZoom();
-            document.getElementById('mapZoom').value = optimalZoom;
         }
         
         function saveCitiesToDB() {
@@ -1695,123 +1706,20 @@
                 routes = parsedRoutes.routes || [];
                 flights = parsedRoutes.flights || [];
                 maritimeRoutes = parsedRoutes.maritimeRoutes || [];
+                
+                // Actualizar contador de índices
+                routeIndexCounter = 1;
+                const allRoutes = [...routes, ...flights, ...maritimeRoutes];
+                allRoutes.forEach(route => {
+                    if (route.index && route.index >= routeIndexCounter) {
+                        routeIndexCounter = route.index + 1;
+                    }
+                });
+                
                 updateMap();
                 updateStatistics();
+                renderCities();
             }
-        }
-
-        // Función para obtener el orden de las ciudades según el itinerario
-        function getCityItineraryOrder() {
-            const cityOrder = {};
-            
-            // Si hay un itinerario definido, usar ese orden
-            if (itinerary.length > 0) {
-                let counter = 1;
-                itinerary.forEach(day => {
-                    // Buscar ciudades mencionadas en el itinerario
-                    cities.forEach(city => {
-                        if (day.content.toLowerCase().includes(city.name.toLowerCase()) && !cityOrder[city.name]) {
-                            cityOrder[city.name] = counter++;
-                        }
-                    });
-                });
-            } else {
-                // Si no hay itinerario, usar el orden de las rutas
-                let counter = 1;
-                
-                // Procesar rutas terrestres
-                routes.forEach(route => {
-                    route.coordinates.forEach(coord => {
-                        const city = cities.find(c =>
-                            c.coords[0] === coord[0] && c.coords[1] === coord[1]
-                        );
-                        if (city && !cityOrder[city.name]) {
-                            cityOrder[city.name] = counter++;
-                        }
-                    });
-                });
-
-                // Procesar vuelos
-                flights.forEach(flight => {
-                    flight.coordinates.forEach(coord => {
-                        const city = cities.find(c =>
-                            c.coords[0] === coord[0] && c.coords[1] === coord[1]
-                        );
-                        if (city && !cityOrder[city.name]) {
-                            cityOrder[city.name] = counter++;
-                        }
-                    });
-                });
-
-                // Procesar rutas marítimas
-                maritimeRoutes.forEach(route => {
-                    route.coordinates.forEach(coord => {
-                        const city = cities.find(c =>
-                            c.coords[0] === coord[0] && c.coords[1] === coord[1]
-                        );
-                        if (city && !cityOrder[city.name]) {
-                            cityOrder[city.name] = counter++;
-                        }
-                    });
-                });
-            }
-
-            return cityOrder;
-        }
-
-        // Funciones para el itinerario
-        function loadItineraryFromJSON() {
-            // Cargar el itinerario proporcionado
-            itinerary = [
-                {
-                    day: "DÍA 1",
-                    title: "MEXICO - LA PAZ",
-                    content: "Cita en el Aeropuerto Internacional Benito Juárez de la Ciudad de México para tomar el vuelo rumbo a La Paz, llegada y recibimiento por nuestro guía. Tarde libre. Alojamiento."
-                },
-                {
-                    day: "DÍA 2",
-                    title: "LA PAZ",
-                    content: "Desayuno. Iniciaremos con un City Tour por el centro y malecón de este bello lugar. A continuación, nos dirigiremos a PLAYA BALANDRA una de las playas más hermosas de México, realizaremos una caminata para conocer la famosa formación rocosa nombrada ¨Hongo de Balandra¨, tiempo libre para disfrutar de este maravilloso lugar. Más tarde nos dirigiremos a la bella PLAYA EL COROMUEL donde podremos nadar. Tarde libre. Alojamiento."
-                },
-                {
-                    day: "DÍA 3",
-                    title: "LA PAZ",
-                    content: "Desayuno, día libre para disfrutar del lugar o si lo desea realizar una excursión opcional (con costo adicional) a la ISLA ESPIRITU SANTO; isla declarada patrimonio de la humanidad por la UNESCO debido a sus paisajes únicos que combinan el mar con el desierto y su enorme biodiversidad que alberga, tiene una duración aproximada de 6 horas, donde podrán visitar el santuario de las aves, colonia de lobos marinos, las ruinas de la madre Perla y realizar snorkel. (El nado, el buceo libre y autónomo están prohibidos del 01 de junio al 31 de agosto de cada año)"
-                },
-                {
-                    day: "DÍA 4",
-                    title: "LA PAZ - TODO SANTOS - LOS CABOS - LA PAZ",
-                    content: "Después del desayuno salida a Los Cabos pasando por el pueblo mágico de TODOS SANTOS, ahí se encuentra el Hotel California (mito de la canción Welcome to the Hotel California del grupo Eagles). Todos Santos es una misión fundada por jesuitas en 1737 con el objetivo de cristianizar a los nativos, al mismo tiempo es un oasis espectacular en el desierto. A continuación, hacia CABO SAN LUCAS. Traslado al embarcadero donde daremos un recorrido en lancha con fondo de cristal, donde apreciaremos la famosa formación rocosa de Cabo San Lucas denominada 'El Arco', junto con otros puntos atractivos de la zona como son: La colonia de leones marinos, La roca del Pelicano, el dedo de Neptuno, la playa del amor y del divorcio. Comida libre. Más tarde nos trasladaremos a SAN JOSÉ DEL CABO para realizar una visita por este histórico poblado. A la hora indicada regreso a La Paz. Alojamiento."
-                },
-                {
-                    day: "DÍA 5",
-                    title: "LA PAZ - MEXICO",
-                    content: "Desayuno, tiempo libre hasta la hora indicada del traslado al aeropuerto para abordar el vuelo de regreso a la Ciudad de México."
-                }
-            ];
-            
-            renderItinerary();
-            updateMap(); // Actualizar el mapa para mostrar los números de orden
-            alert('Itinerario cargado correctamente!');
-        }
-
-        function renderItinerary() {
-            const container = document.getElementById('itinerary-container');
-            if (itinerary.length === 0) {
-                container.innerHTML = '<p class="text-muted text-center">No hay itinerario cargado. Haz clic en "Cargar Itinerario" para cargar el itinerario de ejemplo.</p>';
-                return;
-            }
-
-            container.innerHTML = itinerary.map(day => `
-                <div class="itinerary-day">
-                    <div class="itinerary-day-header">
-                        <i class="fas fa-calendar-day me-2"></i>${day.day} - ${day.title}
-                    </div>
-                    <div class="itinerary-day-content">
-                        ${day.content}
-                    </div>
-                </div>
-            `).join('');
         }
 
         // Inicializar
@@ -1823,7 +1731,6 @@
             loadCitiesFromDB();
             loadRoutesFromDB();
             updateStatistics();
-            renderItinerary();
         });
     </script>
 </body>
