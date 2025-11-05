@@ -8,7 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
+        /* Tu CSS existente permanece igual */
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -682,6 +685,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Variables globales
         let countries = {};
@@ -778,7 +783,12 @@
             const file = document.getElementById('newEmojiFile').value.trim();
 
             if (!name || !file) {
-                alert('Por favor ingresa nombre y archivo del emoji');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor ingresa nombre y archivo del emoji',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
                 return;
             }
 
@@ -790,16 +800,37 @@
             document.getElementById('newEmojiName').value = '';
             document.getElementById('newEmojiFile').value = '';
 
-            alert(`Emoji "${name}" agregado correctamente`);
+            Swal.fire({
+                title: 'Éxito',
+                text: `Emoji "${name}" agregado correctamente`,
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
         }
 
         function clearCustomEmojis() {
-            if (confirm('¿Estás seguro de que quieres eliminar todos los emojis personalizados?')) {
-                customEmojis = {};
-                saveCustomEmojis();
-                updateEmojiSelectors();
-                renderCustomEmojis();
-            }
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Estás seguro de que quieres eliminar todos los emojis personalizados?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    customEmojis = {};
+                    saveCustomEmojis();
+                    updateEmojiSelectors();
+                    renderCustomEmojis();
+                    Swal.fire(
+                        'Eliminados',
+                        'Todos los emojis personalizados han sido eliminados.',
+                        'success'
+                    );
+                }
+            });
         }
 
         function renderCustomEmojis() {
@@ -853,13 +884,18 @@
             const name = document.getElementById('countryName').value;
             const color = document.getElementById('countryColor').value;
 
-            // Obtener emoji seleccionado
+            // Obtener emoji seleccionados
             const selectedEmoji = document.querySelector('#countryEmojiSelector .emoji-option.selected');
             const emojiFile = selectedEmoji ? selectedEmoji.dataset.selectedEmoji : '';
             const emojiName = selectedEmoji ? selectedEmoji.dataset.selectedEmojiName : '';
 
             if (!id || !name) {
-                alert('Por favor completa todos los campos');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor completa todos los campos',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
                 return;
             }
 
@@ -880,7 +916,12 @@
         // Funciones para rutas con iconos simplificados
         function createLandRoute() {
             if (currentLandRouteCities.length < 2) {
-                alert('Se necesitan al menos 2 ciudades para crear una ruta terrestre');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Se necesitan al menos 2 ciudades para crear una ruta terrestre',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
                 return;
             }
 
@@ -910,7 +951,12 @@
 
         function createFlightRoute() {
             if (currentFlightCities.length !== 2) {
-                alert('Los vuelos deben tener exactamente 2 ciudades (origen y destino)');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Los vuelos deben tener exactamente 2 ciudades (origen y destino)',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
                 return;
             }
 
@@ -941,7 +987,12 @@
 
         function createMaritimeRoute() {
             if (currentMaritimeRouteCities.length < 2) {
-                alert('Se necesitan al menos 2 ciudades para crear una ruta marítima');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Se necesitan al menos 2 ciudades para crear una ruta marítima',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
                 return;
             }
 
@@ -1073,7 +1124,12 @@
                 currentFlightCities.push(city);
                 updateFlightRouteVisualizer();
             } else if (currentFlightCities.length >= 2) {
-                alert('Los vuelos solo pueden tener 2 ciudades (origen y destino)');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Los vuelos solo pueden tener 2 ciudades (origen y destino)',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
             }
         }
 
@@ -1157,7 +1213,12 @@
             const lng = parseFloat(document.getElementById('cityLng').value);
 
             if (!name || !countryId || isNaN(lat) || isNaN(lng)) {
-                alert('Por favor completa todos los campos correctamente');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor completa todos los campos correctamente',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
                 return;
             }
 
@@ -1227,15 +1288,31 @@
 
         // Funciones de eliminación
         function deleteCountry(countryId) {
-            if (confirm(`¿Eliminar país ${countries[countryId]?.name} y todas sus ciudades?`)) {
-                delete countries[countryId];
-                cities = cities.filter(c => c.type !== countryId);
-                routes = routes.filter(r => r.country !== countryId);
-                renderCountries();
-                renderCities();
-                updateMap();
-                updateStatistics();
-            }
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Eliminar país ${countries[countryId]?.name} y todas sus ciudades?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    delete countries[countryId];
+                    cities = cities.filter(c => c.type !== countryId);
+                    routes = routes.filter(r => r.country !== countryId);
+                    renderCountries();
+                    renderCities();
+                    updateMap();
+                    updateStatistics();
+                    Swal.fire(
+                        'Eliminado',
+                        'El país y sus ciudades han sido eliminados.',
+                        'success'
+                    );
+                }
+            });
         }
 
         function deleteCity(cityId) {
@@ -1443,50 +1520,110 @@
 
         // Funciones para limpiar rutas
         function clearLandRoutes() {
-            if (confirm('¿Estás seguro de que quieres eliminar todas las rutas terrestres?')) {
-                routes = [];
-                updateMap();
-                saveRoutesToDB();
-                updateStatistics();
-                renderCities();
-                alert('Rutas terrestres eliminadas');
-            }
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Estás seguro de que quieres eliminar todas las rutas terrestres?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    routes = [];
+                    updateMap();
+                    saveRoutesToDB();
+                    updateStatistics();
+                    renderCities();
+                    Swal.fire(
+                        'Eliminadas',
+                        'Rutas terrestres eliminadas',
+                        'success'
+                    );
+                }
+            });
         }
 
         function clearFlightRoutes() {
-            if (confirm('¿Estás seguro de que quieres eliminar todos los vuelos?')) {
-                flights = [];
-                updateMap();
-                saveRoutesToDB();
-                updateStatistics();
-                renderCities();
-                alert('Vuelos eliminados');
-            }
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Estás seguro de que quieres eliminar todos los vuelos?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    flights = [];
+                    updateMap();
+                    saveRoutesToDB();
+                    updateStatistics();
+                    renderCities();
+                    Swal.fire(
+                        'Eliminados',
+                        'Vuelos eliminados',
+                        'success'
+                    );
+                }
+            });
         }
 
         function clearMaritimeRoutes() {
-            if (confirm('¿Estás seguro de que quieres eliminar todas las rutas marítimas?')) {
-                maritimeRoutes = [];
-                updateMap();
-                saveRoutesToDB();
-                updateStatistics();
-                renderCities();
-                alert('Rutas marítimas eliminadas');
-            }
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Estás seguro de que quieres eliminar todas las rutas marítimas?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    maritimeRoutes = [];
+                    updateMap();
+                    saveRoutesToDB();
+                    updateStatistics();
+                    renderCities();
+                    Swal.fire(
+                        'Eliminadas',
+                        'Rutas marítimas eliminadas',
+                        'success'
+                    );
+                }
+            });
         }
 
         function clearAllRoutes() {
-            if (confirm('¿Estás seguro de que quieres eliminar TODAS las rutas?')) {
-                routes = [];
-                flights = [];
-                maritimeRoutes = [];
-                routeIndexCounter = 1;
-                updateMap();
-                saveRoutesToDB();
-                updateStatistics();
-                renderCities();
-                alert('Todas las rutas han sido eliminadas');
-            }
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Estás seguro de que quieres eliminar TODAS las rutas?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    routes = [];
+                    flights = [];
+                    maritimeRoutes = [];
+                    routeIndexCounter = 1;
+                    updateMap();
+                    saveRoutesToDB();
+                    updateStatistics();
+                    renderCities();
+                    Swal.fire(
+                        'Eliminadas',
+                        'Todas las rutas han sido eliminadas',
+                        'success'
+                    );
+                }
+            });
         }
 
         // Generar JSON
@@ -1546,7 +1683,12 @@
         function copyToClipboard() {
             const jsonOutput = document.getElementById('jsonOutput');
             navigator.clipboard.writeText(jsonOutput.textContent).then(() => {
-                alert('JSON copiado al portapapeles!');
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'JSON copiado al portapapeles!',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
             });
         }
 
@@ -1606,10 +1748,20 @@
                 updateStatistics();
 
                 bootstrap.Modal.getInstance(document.getElementById('jsonModal')).hide();
-                alert('Datos cargados correctamente desde JSON!');
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'Datos cargados correctamente desde JSON!',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
 
             } catch (error) {
-                alert('Error al procesar el JSON: ' + error.message);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al procesar el JSON: ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
             }
         }
 
@@ -1629,7 +1781,12 @@
             });
 
             localStorage.setItem('mapGeneratorCountries', JSON.stringify(countriesToSave));
-            alert('Países guardados en la base de datos local!');
+            Swal.fire({
+                title: 'Éxito',
+                text: 'Países guardados en la base de datos local!',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
         }
 
         // Cargar países desde localStorage
@@ -1651,31 +1808,42 @@
         }
 
         function clearAllData() {
-            if (confirm('¿Estás seguro de que quieres limpiar todos los datos?')) {
-                countries = {};
-                cities = [];
-                routes = [];
-                flights = [];
-                maritimeRoutes = [];
-                currentLandRouteCities = [];
-                currentFlightCities = [];
-                currentMaritimeRouteCities = [];
-                routeIndexCounter = 1;
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Estás seguro de que quieres limpiar todos los datos?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, limpiar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    countries = {};
+                    cities = [];
+                    routes = [];
+                    flights = [];
+                    maritimeRoutes = [];
+                    currentLandRouteCities = [];
+                    currentFlightCities = [];
+                    currentMaritimeRouteCities = [];
+                    routeIndexCounter = 1;
 
-                // Limpiar localStorage
-                localStorage.removeItem('mapGeneratorCities');
-                localStorage.removeItem('mapGeneratorRoutes');
+                    // Limpiar localStorage
+                    localStorage.removeItem('mapGeneratorCities');
+                    localStorage.removeItem('mapGeneratorRoutes');
 
-                renderCountries();
-                renderCities();
-                updateLandRouteVisualizer();
-                updateFlightRouteVisualizer();
-                updateMaritimeRouteVisualizer();
-                updateMap();
-                updateStatistics();
+                    renderCountries();
+                    renderCities();
+                    updateLandRouteVisualizer();
+                    updateFlightRouteVisualizer();
+                    updateMaritimeRouteVisualizer();
+                    updateMap();
+                    updateStatistics();
 
-                document.getElementById('jsonOutput').textContent = '// El JSON se generará aquí...';
-            }
+                    document.getElementById('jsonOutput').textContent = '// El JSON se generará aquí...';
+                }
+            });
         }
 
         function saveCitiesToDB() {
