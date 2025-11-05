@@ -256,7 +256,7 @@
             font-weight: bold;
             font-size: 12px;
             border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             position: absolute;
             top: -10px;
             left: -10px;
@@ -279,17 +279,17 @@
             margin-top: 5px;
             display: inline-block;
         }
-        
+
         .clean-buttons {
             display: flex;
             gap: 10px;
             margin-top: 15px;
         }
-        
+
         .clean-buttons .btn {
             flex: 1;
         }
-        
+
         .city-in-route {
             border-left: 4px solid #28a745;
         }
@@ -301,6 +301,52 @@
         <div class="row">
             <!-- Panel de Control -->
             <div class="col-lg-4">
+
+
+                <!-- Países -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Países</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex gap-2 mb-3">
+                            <button class="btn btn-primary btn-sm flex-fill" onclick="showCountryModal()">
+                                <i class="fas fa-plus me-2"></i>Agregar País
+                            </button>
+                            <button class="btn btn-outline-info btn-sm flex-fill" onclick="loadCountriesFromDB()">
+                                <i class="fas fa-database me-2"></i>Cargar BD
+                            </button>
+                        </div>
+                        <div class="drag-container" id="countries-container" ondrop="dropInContainer(event, 'country')"
+                            ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                            Arrastra países aquí o crea nuevos
+                        </div>
+                    </div>
+                </div>
+
+              
+                    </div>
+                    <div class="col-md-6">
+                          <!-- Ciudades -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-city me-2"></i>Ciudades</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary btn-sm w-100 mb-3" onclick="showCityModal()">
+                            <i class="fas fa-plus me-2"></i>Agregar Ciudad
+                        </button>
+
+                        <div class="drag-container" id="cities-container" ondrop="dropInContainer(event, 'city')"
+                            ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                            Arrastra ciudades aquí o crea nuevas
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
                 <!-- Gestor de Rutas -->
                 <div class="card mb-4">
                     <div class="card-header">
@@ -325,45 +371,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Países -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Países</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex gap-2 mb-3">
-                            <button class="btn btn-primary btn-sm flex-fill" onclick="showCountryModal()">
-                                <i class="fas fa-plus me-2"></i>Agregar País
-                            </button>
-                            <button class="btn btn-outline-info btn-sm flex-fill" onclick="loadCountriesFromDB()">
-                                <i class="fas fa-database me-2"></i>Cargar BD
-                            </button>
-                        </div>
-                        <div class="drag-container" id="countries-container" ondrop="dropInContainer(event, 'country')"
-                            ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-                            Arrastra países aquí o crea nuevos
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ciudades -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-city me-2"></i>Ciudades</h5>
-                    </div>
-                    <div class="card-body">
-                        <button class="btn btn-primary btn-sm w-100 mb-3" onclick="showCityModal()">
-                            <i class="fas fa-plus me-2"></i>Agregar Ciudad
-                        </button>
-
-                        <div class="drag-container" id="cities-container" ondrop="dropInContainer(event, 'city')"
-                            ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-                            Arrastra ciudades aquí o crea nuevas
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Gestor de Emojis -->
                 <div class="card mb-4">
                     <div class="card-header">
@@ -435,61 +442,71 @@
                     </div>
                     <div class="card-body">
                         <!-- Rutas Terrestres -->
-                        <div class="route-builder">
-                            <h6>🚗 Rutas Terrestres</h6>
-                            <div class="drag-container" id="land-routes-container"
-                                ondrop="dropInRouteBuilder(event, 'land')" ondragover="allowDrop(event)"
-                                ondragleave="dragLeave(event)">
-                                Arrastra ciudades aquí para crear ruta terrestre
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="route-builder">
+                                    <h6>🚗 Rutas Terrestres</h6>
+                                    <div class="drag-container" id="land-routes-container"
+                                        ondrop="dropInRouteBuilder(event, 'land')" ondragover="allowDrop(event)"
+                                        ondragleave="dragLeave(event)">
+                                        Arrastra ciudades aquí para crear ruta terrestre
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Tipo de Transporte</label>
+                                        <select class="form-control" id="landTransportType">
+                                            <!-- Se llena dinámicamente -->
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-success btn-sm w-100 mt-2" onclick="createLandRoute()">
+                                        <i class="fas fa-check me-2"></i>Crear Ruta Terrestre
+                                    </button>
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <label class="form-label">Tipo de Transporte</label>
-                                <select class="form-control" id="landTransportType">
-                                    <!-- Se llena dinámicamente -->
-                                </select>
+                            <div class="col-md-4">
+                                <!-- Vuelos -->
+                                <div class="flight-builder mt-3">
+                                    <h6>✈️ Vuelos</h6>
+                                    <div class="drag-container" id="flight-routes-container"
+                                        ondrop="dropInRouteBuilder(event, 'flight')" ondragover="allowDrop(event)"
+                                        ondragleave="dragLeave(event)">
+                                        Arrastra 2 ciudades para crear vuelo (origen → destino)
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Tipo de Vuelo</label>
+                                        <select class="form-control" id="flightTransportType">
+                                            <!-- Se llena dinámicamente -->
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-warning btn-sm w-100 mt-2" onclick="createFlightRoute()">
+                                        <i class="fas fa-plane me-2"></i>Crear Vuelo
+                                    </button>
+                                </div>
                             </div>
-                            <button class="btn btn-success btn-sm w-100 mt-2" onclick="createLandRoute()">
-                                <i class="fas fa-check me-2"></i>Crear Ruta Terrestre
-                            </button>
+                            <div class="col-md-4">
+                                <!-- Rutas Marítimas -->
+                                <div class="maritime-builder mt-3">
+                                    <h6>🚢 Rutas Marítimas</h6>
+                                    <div class="drag-container" id="maritime-routes-container"
+                                        ondrop="dropInRouteBuilder(event, 'maritime')" ondragover="allowDrop(event)"
+                                        ondragleave="dragLeave(event)">
+                                        Arrastra ciudades para crear ruta marítima
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Tipo de Transporte</label>
+                                        <select class="form-control" id="maritimeTransportType">
+                                            <!-- Se llena dinámicamente -->
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-info btn-sm w-100 mt-2" onclick="createMaritimeRoute()">
+                                        <i class="fas fa-ship me-2"></i>Crear Ruta Marítima
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Vuelos -->
-                        <div class="flight-builder mt-3">
-                            <h6>✈️ Vuelos</h6>
-                            <div class="drag-container" id="flight-routes-container"
-                                ondrop="dropInRouteBuilder(event, 'flight')" ondragover="allowDrop(event)"
-                                ondragleave="dragLeave(event)">
-                                Arrastra 2 ciudades para crear vuelo (origen → destino)
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Tipo de Vuelo</label>
-                                <select class="form-control" id="flightTransportType">
-                                    <!-- Se llena dinámicamente -->
-                                </select>
-                            </div>
-                            <button class="btn btn-warning btn-sm w-100 mt-2" onclick="createFlightRoute()">
-                                <i class="fas fa-plane me-2"></i>Crear Vuelo
-                            </button>
-                        </div>
 
-                        <!-- Rutas Marítimas -->
-                        <div class="maritime-builder mt-3">
-                            <h6>🚢 Rutas Marítimas</h6>
-                            <div class="drag-container" id="maritime-routes-container"
-                                ondrop="dropInRouteBuilder(event, 'maritime')" ondragover="allowDrop(event)"
-                                ondragleave="dragLeave(event)">
-                                Arrastra ciudades para crear ruta marítima
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Tipo de Transporte</label>
-                                <select class="form-control" id="maritimeTransportType">
-                                    <!-- Se llena dinámicamente -->
-                                </select>
-                            </div>
-                            <button class="btn btn-info btn-sm w-100 mt-2" onclick="createMaritimeRoute()">
-                                <i class="fas fa-ship me-2"></i>Crear Ruta Marítima
-                            </button>
-                        </div>
+
+
                     </div>
                 </div>
 
@@ -695,7 +712,7 @@
                 'aereo': 'iconos/vuelo.png',
                 'maritimo': 'iconos/barco.png'
             };
-            
+
             updateTransportSelectors(transportIcons);
         }
 
@@ -1086,7 +1103,7 @@
         // Funciones para rutas marítimas
         function addCityToMaritimeRoute(cityId) {
             const city = cities.find(c => c.id === cityId);
-            if (city && !currentMaritimeRouteCities.find(c => c.id !== cityId)) {
+            if (city && !currentMaritimeRouteCities.find(c => c.id === cityId)) {
                 currentMaritimeRouteCities.push(city);
                 updateMaritimeRouteVisualizer();
             }
@@ -1167,7 +1184,7 @@
             container.innerHTML = cities.map(city => {
                 const isInRoute = isCityInAnyRoute(city);
                 const cityClass = isInRoute ? 'city-in-route' : '';
-                
+
                 return `
                 <div class="draggable-item ${cityClass}" draggable="true" ondragstart="dragStart(event, 'city', '${city.id}')" ondragend="dragEnd(event)">
                     <strong>${city.name}</strong>
@@ -1185,26 +1202,26 @@
         // Función para verificar si una ciudad está en alguna ruta
         function isCityInAnyRoute(city) {
             // Verificar en rutas terrestres
-            const inLandRoute = routes.some(route => 
-                route.coordinates.some(coord => 
+            const inLandRoute = routes.some(route =>
+                route.coordinates.some(coord =>
                     coord[0] === city.coords[0] && coord[1] === city.coords[1]
                 )
             );
-            
+
             // Verificar en vuelos
-            const inFlight = flights.some(flight => 
-                flight.coordinates.some(coord => 
+            const inFlight = flights.some(flight =>
+                flight.coordinates.some(coord =>
                     coord[0] === city.coords[0] && coord[1] === city.coords[1]
                 )
             );
-            
+
             // Verificar en rutas marítimas
-            const inMaritimeRoute = maritimeRoutes.some(route => 
-                route.coordinates.some(coord => 
+            const inMaritimeRoute = maritimeRoutes.some(route =>
+                route.coordinates.some(coord =>
                     coord[0] === city.coords[0] && coord[1] === city.coords[1]
                 )
             );
-            
+
             return inLandRoute || inFlight || inMaritimeRoute;
         }
 
@@ -1271,7 +1288,7 @@
                         weight: 5,
                         opacity: 0.8
                     }).addTo(map).bindTooltip(route.tooltip);
-                    
+
                     // Agregar número de índice a la ruta
                     if (route.index) {
                         const midPoint = getMidPoint(route.coordinates);
@@ -1296,7 +1313,7 @@
                         opacity: 0.6,
                         dashArray: '10, 10'
                     }).addTo(map).bindTooltip(flight.tooltip);
-                    
+
                     // Agregar número de índice al vuelo
                     if (flight.index) {
                         const midPoint = getMidPoint(flight.coordinates);
@@ -1321,7 +1338,7 @@
                         opacity: 0.7,
                         dashArray: '5, 10'
                     }).addTo(map).bindTooltip(route.tooltip);
-                    
+
                     // Agregar número de índice a la ruta marítima
                     if (route.index) {
                         const midPoint = getMidPoint(route.coordinates);
@@ -1341,11 +1358,11 @@
         // Función para obtener las ciudades que están en rutas
         function getCitiesInRoutes() {
             const citiesInRoutes = [];
-            
+
             // Agregar ciudades de rutas terrestres
             routes.forEach(route => {
                 route.coordinates.forEach(coord => {
-                    const city = cities.find(c => 
+                    const city = cities.find(c =>
                         c.coords[0] === coord[0] && c.coords[1] === coord[1]
                     );
                     if (city && !citiesInRoutes.find(c => c.id === city.id)) {
@@ -1353,11 +1370,11 @@
                     }
                 });
             });
-            
+
             // Agregar ciudades de vuelos
             flights.forEach(flight => {
                 flight.coordinates.forEach(coord => {
-                    const city = cities.find(c => 
+                    const city = cities.find(c =>
                         c.coords[0] === coord[0] && c.coords[1] === coord[1]
                     );
                     if (city && !citiesInRoutes.find(c => c.id === city.id)) {
@@ -1365,11 +1382,11 @@
                     }
                 });
             });
-            
+
             // Agregar ciudades de rutas marítimas
             maritimeRoutes.forEach(route => {
                 route.coordinates.forEach(coord => {
-                    const city = cities.find(c => 
+                    const city = cities.find(c =>
                         c.coords[0] === coord[0] && c.coords[1] === coord[1]
                     );
                     if (city && !citiesInRoutes.find(c => c.id === city.id)) {
@@ -1377,17 +1394,17 @@
                     }
                 });
             });
-            
+
             return citiesInRoutes;
         }
 
         // Función para calcular el punto medio de una ruta
         function getMidPoint(coordinates) {
             if (coordinates.length === 0) return [0, 0];
-            
+
             const sumLat = coordinates.reduce((sum, coord) => sum + coord[0], 0);
             const sumLng = coordinates.reduce((sum, coord) => sum + coord[1], 0);
-            
+
             return [sumLat / coordinates.length, sumLng / coordinates.length];
         }
 
@@ -1572,7 +1589,7 @@
                 if (data.routes) routes = data.routes;
                 if (data.flights) flights = data.flights;
                 if (data.maritimeRoutes) maritimeRoutes = data.maritimeRoutes;
-                
+
                 // Actualizar contador de índices
                 routeIndexCounter = 1;
                 const allRoutes = [...routes, ...flights, ...maritimeRoutes];
@@ -1660,7 +1677,7 @@
                 document.getElementById('jsonOutput').textContent = '// El JSON se generará aquí...';
             }
         }
-        
+
         function saveCitiesToDB() {
             const citiesToSave = cities.map(city => ({
                 id: city.id,
@@ -1673,7 +1690,7 @@
 
             localStorage.setItem('mapGeneratorCities', JSON.stringify(citiesToSave));
         }
-        
+
         function loadCitiesFromDB() {
             const savedCities = localStorage.getItem('mapGeneratorCities');
 
@@ -1706,7 +1723,7 @@
                 routes = parsedRoutes.routes || [];
                 flights = parsedRoutes.flights || [];
                 maritimeRoutes = parsedRoutes.maritimeRoutes || [];
-                
+
                 // Actualizar contador de índices
                 routeIndexCounter = 1;
                 const allRoutes = [...routes, ...flights, ...maritimeRoutes];
@@ -1715,7 +1732,7 @@
                         routeIndexCounter = route.index + 1;
                     }
                 });
-                
+
                 updateMap();
                 updateStatistics();
                 renderCities();
