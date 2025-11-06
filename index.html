@@ -14,7 +14,6 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -478,10 +477,280 @@
             word-break: break-word;
             max-width: 100%;
         }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-gradient {
+            background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            color: white;
+        }
+
+        .terms-content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .editable {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .editable:focus {
+            outline: 2px solid #86b7fe;
+        }
+
+        .table-container {
+            position: relative;
+        }
+
+        .table-actions {
+            position: absolute;
+            right: 0;
+            top: -40px;
+        }
+
+        .header-bg {
+            background-color: #004697;
+            color: white;
+        }
+
+        .code-container {
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            z-index: 10;
+        }
+
+        .sortable-handle {
+            cursor: move;
+            color: #6c757d;
+        }
+
+        /* Estilos para el header y footer */
+        .main-header {
+            background-color: #004697;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, .8);
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, .6);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-icons a {
+            color: white;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Estilos para el modal de acerca de */
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #004697;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .social-link {
+            display: inline-block;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            color: #004697;
+            transition: transform 0.3s;
+        }
+
+        .social-link:hover {
+            transform: scale(1.2);
+            color: #003366;
+        }
+
+        .skill-badge {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* Nuevos estilos para acciones de columnas */
+        .column-header {
+            position: relative;
+        }
+
+        .column-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: none;
+        }
+
+        th:hover .column-actions {
+            display: block;
+        }
+
+        .column-actions button {
+            padding: 2px 5px;
+            margin-left: 3px;
+            font-size: 0.7rem;
+            line-height: 1;
+        }
     </style>
 </head>
 
 <body>
+    <header class="main-header header-gradient">
+        <div class="container">
+            <div class="row align-items-center py-3">
+                <div class="col-md-6">
+                    <div class="logo d-flex align-items-center">
+                        <i class="fas fa-map-marked-alt me-2 fs-3" style="color: white;"></i>
+                        <h1 class="h4 mb-0 fw-bold" style="color: white;">Generador de Mapas Interactivos</h1>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item position-relative">
+                            <a class="nav-link text-white" href="#">
+                                <i class="fas fa-home me-1"></i> Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                                <i class="fas fa-info-circle me-1"></i> Acerca de
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" data-bs-toggle="modal"
+                                data-bs-target="#contactModal">
+                                <i class="fas fa-envelope me-1"></i> Contacto
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-white dropdown-toggle" href="#" id="legalDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-gavel me-1"></i> Legal
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="legalDropdown">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#termsModal">Términos y Condiciones</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#privacyModal">Política de Privacidad</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#cookiesModal">Política de Cookies</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
     <!-- Botón de ayuda flotante -->
     <button class="help-btn" onclick="showHelpModal()">
         <i class="fas fa-question"></i>
@@ -809,6 +1078,182 @@
         </div>
     </div>
 
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutModalLabel">Acerca del Desarrollador</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="https://kevingil12c.github.io/portafolio-kevscl/assets/images/icon.jpeg"
+                        alt="Tu foto de perfil" class="profile-img">
+                    <h3>Kevin Jesús Coyote Gil</h3>
+                    <p class="text-muted">Desarrollador Web</p>
+
+                    <div class="my-4">
+                        <p>¡Hola! Soy un apasionado desarrollador web con experiencia en creación de herramientas útiles
+                            como este generador de tablas HTML.</p>
+                        <p>Especializado en frontend con HTML, CSS, JavaScript y frameworks modernos, pero también con
+                            sólidos conocimientos en backend.</p>
+                    </div>
+
+                    <h4 class="mt-4">Mis Habilidades</h4>
+                    <div class="mb-4">
+                        <span class="badge bg-primary skill-badge">HTML5</span>
+                        <span class="badge bg-primary skill-badge">CSS3</span>
+                        <span class="badge bg-primary skill-badge">JavaScript</span>
+                        <span class="badge bg-primary skill-badge">Bootstrap</span>
+                        <span class="badge bg-primary skill-badge">jQuery</span>
+                        <span class="badge bg-success skill-badge">React</span>
+                        <span class="badge bg-success skill-badge">Node.js</span>
+                        <span class="badge bg-success skill-badge">PHP</span>
+                        <span class="badge bg-info skill-badge">MySQL</span>
+                        <span class="badge bg-info skill-badge">SQLite</span>
+                        <span class="badge bg-warning skill-badge">Git</span>
+                        <span class="badge bg-warning skill-badge">GitHub</span>
+                    </div>
+
+                    <h4 class="mt-4">Conéctate Conmigo</h4>
+                    <div class="social-links my-3">
+                        <!-- Reemplaza los # con tus enlaces reales -->
+                        <a href="https://github.com/KevinGil12C" target="_blank" class="social-link" title="GitHub"
+                            target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/kevin-jesus-coyote-gil-030287288/" target="_blank"
+                            class="social-link" title="LinkedIn" target="_blank">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" target="_blank" class="social-link" title="Twitter" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://kevingil12c.github.io/portafolio-kevscl/" target="_blank" class="social-link"
+                            title="Portafolio" target="_blank">
+                            <i class="fas fa-briefcase"></i>
+                        </a>
+                        <a href="https://kevingil12c.github.io/blog_seguridad_informacion/" target="_blank"
+                            class="social-link" title="Blog" target="_blank">
+                            <i class="fab fa-medium"></i>
+                        </a>
+                        <a href="mailto:kebo.jcg77@gmail.com" class="social-link" title="Email" target="_blank">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="https://cvdesignr.com/p/6699d06173214" download class="btn btn-primary me-2"
+                            target="_blank">
+                            <i class="fas fa-download me-1"></i> Descargar CV
+                        </a>
+                        <a href="https://api.whatsapp.com/send?phone=7221595250" class="btn btn-success"
+                            target="_blank">
+                            <i class="fab fa-whatsapp me-1"></i> Contactar por WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer footer-gradient text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="mb-3 fw-bold">
+                        <i class="fas fa-map-marked-alt me-2"></i>Generador de Mapas
+                    </h5>
+                    <p class="mb-3">Herramienta interactiva para crear mapas personalizados con OpenStreetMap. Diseña
+                        rutas terrestres, aéreas y marítimas de forma visual.</p>
+                    <div class="d-flex">
+                        <a href="#" class="btn btn-outline-light btn-sm me-2" data-bs-toggle="modal"
+                            data-bs-target="#aboutModal">
+                            <i class="fas fa-info-circle me-1"></i> Acerca de
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#contactModal">
+                            <i class="fas fa-envelope me-1"></i> Contacto
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="mb-3 fw-bold">Enlaces útiles</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="https://github.com/KevinGil12C/generate_map"
+                                class="text-white text-decoration-none" target="_blank">
+                                <i class="fas fa-external-link-alt me-2"></i>Documentación
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="text-white text-decoration-none" data-bs-toggle="modal"
+                                data-bs-target="#aboutModal">
+                                <i class="fas fa-user me-2"></i>Acerca del desarrollador
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="text-white text-decoration-none" data-bs-toggle="modal"
+                                data-bs-target="#tutorialModal">
+                                <i class="fas fa-play-circle me-2"></i>Tutoriales
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-white text-decoration-none" data-bs-toggle="modal"
+                                data-bs-target="#supportModal">
+                                <i class="fas fa-life-ring me-2"></i>Soporte
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h5 class="mb-3 fw-bold">Contacto</h5>
+                    <p class="mb-2">
+                        <i class="fas fa-envelope me-2"></i> kebo.jcg77@gmail.com
+                    </p>
+                    <p class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i> México
+                    </p>
+                    <div class="social-icons">
+                        <a href="https://github.com/KevinGil12C" target="_blank" class="text-white me-3 fs-5"
+                            title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/kevin-jesus-coyote-gil-030287288/" target="_blank"
+                            class="text-white me-3 fs-5" title="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://twitter.com/tuusuario" target="_blank" class="text-white me-3 fs-5"
+                            title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://kevingil12c.github.io/portafolio-kevscl/" target="_blank"
+                            class="text-white me-3 fs-5" title="Portafolio">
+                            <i class="fas fa-briefcase"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 bg-light opacity-25">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2025 Generador de Mapas. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">
+                        <a href="#" class="text-white text-decoration-none me-3" data-bs-toggle="modal"
+                            data-bs-target="#termsModal">Términos</a>
+                        <a href="#" class="text-white text-decoration-none me-3" data-bs-toggle="modal"
+                            data-bs-target="#privacyModal">Privacidad</a>
+                        <a href="#" class="text-white text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#cookiesModal">Cookies</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
     <!-- Modal País -->
     <div class="modal fade" id="countryModal" tabindex="-1">
         <div class="modal-dialog">
@@ -1003,7 +1448,283 @@
             </div>
         </div>
     </div>
+    <!-- Modal Términos y Condiciones -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">
+                        <i class="fas fa-file-contract me-2"></i>Términos y Condiciones
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="terms-content">
+                        <h5>1. Aceptación de los Términos</h5>
+                        <p>Al acceder y utilizar el Generador de Mapas, usted acepta cumplir con estos términos y
+                            condiciones, así como con nuestra política de privacidad.</p>
 
+                        <h5>2. Uso del Servicio</h5>
+                        <p>El Generador de Mapas es una herramienta gratuita para crear mapas personalizados. Usted es
+                            responsable del contenido que genere y comparta.</p>
+
+                        <h5>3. Propiedad Intelectual</h5>
+                        <p>Los mapas generados son de su propiedad, pero el código fuente y la interfaz de la aplicación
+                            pertenecen al desarrollador.</p>
+
+                        <h5>4. Limitación de Responsabilidad</h5>
+                        <p>El servicio se proporciona "tal cual" sin garantías de ningún tipo. No nos hacemos
+                            responsables por la precisión de los datos en los mapas generados.</p>
+
+                        <h5>5. Modificaciones</h5>
+                        <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios
+                            entrarán en vigor inmediatamente después de su publicación.</p>
+
+                        <h5>6. Terminación</h5>
+                        <p>Podemos suspender o terminar su acceso al servicio si viola estos términos y condiciones.</p>
+
+                        <p class="mt-4"><strong>Fecha de última actualización:</strong> Noviembre 2025</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="acceptTerms()">Aceptar Términos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Política de Privacidad -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="privacyModalLabel">
+                        <i class="fas fa-shield-alt me-2"></i>Política de Privacidad
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="terms-content">
+                        <h5>1. Información que Recopilamos</h5>
+                        <p>El Generador de Mapas recopila únicamente la información necesaria para el funcionamiento de
+                            la aplicación, como preferencias de usuario y datos de mapas generados.</p>
+
+                        <h5>2. Uso de la Información</h5>
+                        <p>Utilizamos la información para mejorar la experiencia del usuario y el funcionamiento de la
+                            aplicación. No compartimos información personal con terceros.</p>
+
+                        <h5>3. Almacenamiento de Datos</h5>
+                        <p>Los datos de los mapas se almacenan localmente en su navegador. No almacenamos información
+                            personal en nuestros servidores.</p>
+
+                        <h5>4. Cookies</h5>
+                        <p>Utilizamos cookies para mejorar la funcionalidad de la aplicación. Puede desactivarlas en la
+                            configuración de su navegador.</p>
+
+                        <h5>5. Seguridad</h5>
+                        <p>Implementamos medidas de seguridad para proteger sus datos, aunque ninguna transmisión por
+                            Internet es 100% segura.</p>
+
+                        <h5>6. Sus Derechos</h5>
+                        <p>Usted tiene derecho a acceder, corregir o eliminar sus datos personales. Contacte con
+                            nosotros para ejercer estos derechos.</p>
+
+                        <p class="mt-4"><strong>Fecha de última actualización:</strong> Noviembre 2025</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Política de Cookies -->
+    <div class="modal fade" id="cookiesModal" tabindex="-1" aria-labelledby="cookiesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cookiesModalLabel">
+                        <i class="fas fa-cookie me-2"></i>Política de Cookies
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="terms-content">
+                        <h5>1. ¿Qué son las Cookies?</h5>
+                        <p>Las cookies son pequeños archivos de texto que se almacenan en su dispositivo cuando visita
+                            nuestro sitio web.</p>
+
+                        <h5>2. Tipos de Cookies que Utilizamos</h5>
+                        <ul>
+                            <li><strong>Cookies Esenciales:</strong> Necesarias para el funcionamiento básico del sitio.
+                            </li>
+                            <li><strong>Cookies de Funcionalidad:</strong> Permiten recordar sus preferencias.</li>
+                            <li><strong>Cookies de Rendimiento:</strong> Nos ayudan a mejorar el sitio recopilando
+                                información anónima.</li>
+                        </ul>
+
+                        <h5>3. Cómo Controlar las Cookies</h5>
+                        <p>Puede controlar y/o eliminar las cookies según desee. Puede eliminar todas las cookies que ya
+                            están en su equipo y configurar la mayoría de los navegadores para impedir que se coloquen.
+                        </p>
+
+                        <h5>4. Cookies de Terceros</h5>
+                        <p>Utilizamos servicios de terceros como Bootstrap, FontAwesome y Leaflet que pueden utilizar
+                            cookies para mejorar su experiencia.</p>
+
+                        <h5>5. Cambios en la Política de Cookies</h5>
+                        <p>Podemos actualizar esta política ocasionalmente. Le recomendamos revisarla periódicamente.
+                        </p>
+
+                        <p class="mt-4"><strong>Fecha de última actualización:</strong> Noviembre 2025</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="acceptCookies()">Aceptar Cookies</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Contacto -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contactModalLabel">
+                        <i class="fas fa-envelope me-2"></i>Contacto
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <label for="contactName" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="contactName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="contactEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactSubject" class="form-label">Asunto</label>
+                            <input type="text" class="form-control" id="contactSubject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactMessage" class="form-label">Mensaje</label>
+                            <textarea class="form-control" id="contactMessage" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="submitContactForm()">Enviar Mensaje</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tutoriales -->
+    <div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="tutorialModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tutorialModalLabel">
+                        <i class="fas fa-play-circle me-2"></i>Tutoriales
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-flag fa-3x text-primary mb-3"></i>
+                                    <h5>Crear Países</h5>
+                                    <p>Aprende a agregar y personalizar países con banderas y colores.</p>
+                                    <button class="btn btn-outline-primary btn-sm">Ver Tutorial</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-city fa-3x text-success mb-3"></i>
+                                    <h5>Agregar Ciudades</h5>
+                                    <p>Descubre cómo crear ciudades y asignarlas a países.</p>
+                                    <button class="btn btn-outline-success btn-sm">Ver Tutorial</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-route fa-3x text-warning mb-3"></i>
+                                    <h5>Crear Rutas</h5>
+                                    <p>Aprende a conectar ciudades con diferentes tipos de rutas.</p>
+                                    <button class="btn btn-outline-warning btn-sm">Ver Tutorial</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-code fa-3x text-info mb-3"></i>
+                                    <h5>Exportar JSON</h5>
+                                    <p>Genera y utiliza el código JSON en tus proyectos.</p>
+                                    <button class="btn btn-outline-info btn-sm">Ver Tutorial</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Soporte -->
+    <div class="modal fade" id="supportModal" tabindex="-1" aria-labelledby="supportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="supportModalLabel">
+                        <i class="fas fa-life-ring me-2"></i>Soporte
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                        <h4>¿Necesitas ayuda?</h4>
+                        <p>Estamos aquí para ayudarte con cualquier problema o pregunta que tengas sobre el Generador de
+                            Mapas.</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="mailto:kebo.jcg77@gmail.com" class="btn btn-primary">
+                            <i class="fas fa-envelope me-2"></i>Enviar Email
+                        </a>
+                        <a href="https://api.whatsapp.com/send?phone=7221595250" class="btn btn-success"
+                            target="_blank">
+                            <i class="fab fa-whatsapp me-2"></i>Contactar por WhatsApp
+                        </a>
+                        <a href="https://github.com/KevinGil12C/generate_map/issues" class="btn btn-dark"
+                            target="_blank">
+                            <i class="fab fa-github me-2"></i>Reportar Problema en GitHub
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- SweetAlert JS -->
@@ -3175,6 +3896,155 @@
             initTooltips();
             updateEmojiSelectors();
 
+        });
+
+        // Funciones para los nuevos modales
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function acceptTerms() {
+            localStorage.setItem('termsAccepted', 'true');
+            Swal.fire({
+                title: '¡Términos Aceptados!',
+                text: 'Has aceptado nuestros términos y condiciones.',
+                icon: 'success',
+                confirmButtonText: 'Continuar'
+            }).then(() => {
+                $('#termsModal').modal('hide');
+            });
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            Swal.fire({
+                title: 'Cookies Aceptadas',
+                text: 'Has aceptado nuestra política de cookies.',
+                icon: 'success',
+                confirmButtonText: 'Continuar'
+            }).then(() => {
+                $('#cookiesModal').modal('hide');
+            });
+        }
+
+        // Función para enviar formulario por WhatsApp
+        function sendToWhatsApp() {
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+
+            // Validar campos obligatorios
+            if (!name || !email || !subject || !message) {
+                Swal.fire({
+                    title: 'Campos Incompletos',
+                    text: 'Por favor, completa todos los campos obligatorios del formulario.',
+                    icon: 'warning',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+
+            // Validar formato de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                Swal.fire({
+                    title: 'Email Inválido',
+                    text: 'Por favor, ingresa una dirección de correo electrónico válida.',
+                    icon: 'warning',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+
+            // Formatear el mensaje para WhatsApp
+            const whatsappMessage = `Hola, me gustaría contactarlos desde el Generador de Mapas:
+
+*Nombre:* ${name}
+*Email:* ${email}
+*Asunto:* ${subject}
+*Mensaje:*
+${message}
+
+Espero su respuesta. ¡Gracias!`;
+
+            // Codificar el mensaje para URL
+            const encodedMessage = encodeURIComponent(whatsappMessage);
+
+            // Número de WhatsApp (reemplaza con tu número)
+            const phoneNumber = "7221595250"; // Tu número sin el + ni espacios
+
+            // Crear URL de WhatsApp
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+            // Mostrar confirmación antes de redirigir
+            Swal.fire({
+                title: '¿Listo para enviar?',
+                html: `Serás redirigido a WhatsApp para enviar tu mensaje.<br><br>
+                      <strong>Resumen:</strong><br>
+                      <strong>Nombre:</strong> ${name}<br>
+                      <strong>Email:</strong> ${email}<br>
+                      <strong>Asunto:</strong> ${subject}`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, enviar por WhatsApp',
+                cancelButtonText: 'Revisar mensaje',
+                confirmButtonColor: '#25D366'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a WhatsApp
+                    window.open(whatsappURL, '_blank');
+
+                    // Cerrar modal
+                    $('#contactModal').modal('hide');
+
+                    // Limpiar formulario
+                    document.getElementById('contactForm').reset();
+
+                    // Mostrar mensaje de éxito
+                    setTimeout(() => {
+                        Swal.fire({
+                            title: '¡Mensaje Listo!',
+                            text: 'Has sido redirigido a WhatsApp. Completa el envío del mensaje allí.',
+                            icon: 'success',
+                            confirmButtonText: 'Entendido'
+                        });
+                    }, 1000);
+                }
+            });
+        }
+
+        // Mostrar botón de scroll cuando se hace scroll
+        window.addEventListener('scroll', function () {
+            const scrollButton = document.querySelector('.scroll-to-top');
+            if (window.scrollY > 300) {
+                scrollButton.style.display = 'flex';
+            } else {
+                scrollButton.style.display = 'none';
+            }
+        });
+
+        // Verificar si ya se aceptaron términos y cookies
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!localStorage.getItem('termsAccepted')) {
+                setTimeout(() => {
+                    $('#termsModal').modal('show');
+                }, 2000);
+            }
+
+            if (!localStorage.getItem('cookiesAccepted')) {
+                setTimeout(() => {
+                    $('#cookiesModal').modal('show');
+                }, 3000);
+            }
+
+            // Permitir enviar formulario con Enter
+            document.getElementById('contactForm').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendToWhatsApp();
+                }
+            });
         });
     </script>
 </body>
