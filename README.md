@@ -86,6 +86,7 @@ Una aplicación web moderna para crear mapas interactivos con rutas terrestres, 
 1. Haz clic en "Generar JSON"
 2. Usa "Copiar" para guardar en el portapapeles
 3. El JSON incluye toda la configuración del mapa
+![alt text](image-1.png)
 
 #### Importar JSON
 1. Haz clic en "Cargar desde JSON"
