@@ -11,7 +11,6 @@
     <!-- SweetAlert CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        /* Tu CSS existente permanece igual */
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -296,88 +295,266 @@
         .city-in-route {
             border-left: 4px solid #28a745;
         }
+
+        /* Estilos para el sistema de ayuda */
+        .help-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .help-tooltip {
+            position: fixed;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            max-width: 250px;
+            z-index: 1050;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+        }
+
+        .help-tooltip::after {
+            content: '';
+            position: absolute;
+            border-width: 5px;
+            border-style: solid;
+        }
+
+        .help-tooltip.top::after {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .help-tooltip.bottom::after {
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-color: transparent transparent #333 transparent;
+        }
+
+        .help-section {
+            margin-bottom: 25px;
+        }
+
+        .help-section h5 {
+            border-bottom: 2px solid #1a2a6c;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .help-step {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .help-step::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #1a2a6c;
+            font-weight: bold;
+        }
+
+        .routes-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .route-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+
+        .route-item.land-route {
+            border-left-color: #28a745;
+        }
+
+        .route-item.flight-route {
+            border-left-color: #ffc107;
+        }
+
+        .route-item.maritime-route {
+            border-left-color: #17a2b8;
+        }
+
+        .route-info {
+            flex-grow: 1;
+        }
+
+        .route-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .tooltip-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: #6c757d;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        .emoji-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 5px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .emoji-option {
+            width: 75px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            padding: 5px;
+        }
+
+        .emoji-option:hover {
+            border-color: #1a2a6c;
+            transform: scale(1.05);
+        }
+
+        .emoji-option.selected {
+            border-color: #1a2a6c;
+            background-color: #e3f2fd;
+        }
+
+        .emoji-name {
+            font-size: 10px;
+            text-align: center;
+            margin-top: 2px;
+            word-break: break-word;
+            max-width: 100%;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Botón de ayuda flotante -->
+    <button class="help-btn" onclick="showHelpModal()">
+        <i class="fas fa-question"></i>
+    </button>
+
     <div class="container-fluid">
         <div class="row">
             <!-- Panel de Control -->
             <div class="col-lg-4">
-
-
                 <!-- Países -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Países</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex gap-2 mb-3">
-                            <button class="btn btn-primary btn-sm flex-fill" onclick="showCountryModal()">
-                                <i class="fas fa-plus me-2"></i>Agregar País
-                            </button>
-                            <button class="btn btn-outline-info btn-sm flex-fill" onclick="loadCountriesFromDB()">
-                                <i class="fas fa-database me-2"></i>Cargar BD
-                            </button>
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Países
+                                    <span class="tooltip-icon"
+                                        title="Agrega países con sus banderas y colores para organizar tus ciudades">i</span>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex gap-2 mb-3">
+                                    <button class="btn btn-primary btn-sm flex-fill" onclick="showCountryModal()">
+                                        <i class="fas fa-plus me-2"></i>Agregar País
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm flex-fill"
+                                        onclick="loadCountriesFromDB()">
+                                        <i class="fas fa-database me-2"></i>Cargar BD
+                                    </button>
+                                </div>
+                                <div class="drag-container" id="countries-container"
+                                    ondrop="dropInContainer(event, 'country')" ondragover="allowDrop(event)"
+                                    ondragleave="dragLeave(event)">
+                                    Arrastra países aquí o crea nuevos
+                                </div>
+                            </div>
                         </div>
-                        <div class="drag-container" id="countries-container" ondrop="dropInContainer(event, 'country')"
-                            ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-                            Arrastra países aquí o crea nuevos
-                        </div>
-                    </div>
-                </div>
 
-              
+
                     </div>
                     <div class="col-md-6">
-                          <!-- Ciudades -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-city me-2"></i>Ciudades</h5>
-                    </div>
-                    <div class="card-body">
-                        <button class="btn btn-primary btn-sm w-100 mb-3" onclick="showCityModal()">
-                            <i class="fas fa-plus me-2"></i>Agregar Ciudad
-                        </button>
+                        <!-- Ciudades -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-city me-2"></i>Ciudades
+                                    <span class="tooltip-icon"
+                                        title="Crea ciudades y asígnalas a países. Las ciudades pueden arrastrarse a las rutas">i</span>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary btn-sm w-100 mb-3" onclick="showCityModal()">
+                                    <i class="fas fa-plus me-2"></i>Agregar Ciudad
+                                </button>
 
-                        <div class="drag-container" id="cities-container" ondrop="dropInContainer(event, 'city')"
-                            ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-                            Arrastra ciudades aquí o crea nuevas
+                                <div class="drag-container" id="cities-container"
+                                    ondrop="dropInContainer(event, 'city')" ondragover="allowDrop(event)"
+                                    ondragleave="dragLeave(event)">
+                                    Arrastra ciudades aquí o crea nuevas
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                    </div>
-                </div>
-                <!-- Gestor de Rutas -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-route me-2"></i>Gestión de Rutas</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="clean-buttons">
-                            <button class="btn btn-outline-warning" onclick="clearLandRoutes()">
-                                <i class="fas fa-trash me-2"></i>Limpiar Rutas Terrestres
-                            </button>
-                            <button class="btn btn-outline-warning" onclick="clearFlightRoutes()">
-                                <i class="fas fa-trash me-2"></i>Limpiar Vuelos
-                            </button>
-                        </div>
-                        <div class="clean-buttons">
-                            <button class="btn btn-outline-warning" onclick="clearMaritimeRoutes()">
-                                <i class="fas fa-trash me-2"></i>Limpiar Rutas Marítimas
-                            </button>
-                            <button class="btn btn-outline-danger" onclick="clearAllRoutes()">
-                                <i class="fas fa-broom me-2"></i>Limpiar Todas las Rutas
-                            </button>
-                        </div>
-                    </div>
-                </div>
+
+
+
+
                 <!-- Gestor de Emojis -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-smile me-2"></i>Gestor de Emojis</h5>
+                        <h5 class="mb-0"><i class="fas fa-smile me-2"></i>Gestor de Emojis
+                            <span class="tooltip-icon"
+                                title="Agrega iconos personalizados para representar países">i</span>
+                        </h5>
                     </div>
                     <div class="card-body">
                         <div class="icon-manager">
@@ -438,85 +615,142 @@
 
             <!-- Mapa y JSON -->
             <div class="col-lg-8">
-                <!-- Constructor de Rutas -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-route me-2"></i>Constructor de Rutas</h5>
+                <!-- Mapa -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Constructor de Rutas -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Constructor de Rutas
+                                    <span class="tooltip-icon"
+                                        title="Arrastra ciudades aquí para crear nuevas rutas">i</span>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <!-- Rutas Terrestres -->
+                                        <div class="route-builder">
+                                            <h6>🚗 Rutas Terrestres</h6>
+                                            <div class="drag-container" id="land-routes-container"
+                                                ondrop="dropInRouteBuilder(event, 'land')" ondragover="allowDrop(event)"
+                                                ondragleave="dragLeave(event)">
+                                                Arrastra ciudades aquí para crear ruta terrestre
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Tipo de Transporte</label>
+                                                <select class="form-control" id="landTransportType">
+                                                    <!-- Se llena dinámicamente -->
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-success btn-sm w-100 mt-2"
+                                                onclick="createLandRoute()">
+                                                <i class="fas fa-check me-2"></i>Crear Ruta Terrestre
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!-- Vuelos -->
+                                        <div class="flight-builder mt-3">
+                                            <h6>✈️ Vuelos</h6>
+                                            <div class="drag-container" id="flight-routes-container"
+                                                ondrop="dropInRouteBuilder(event, 'flight')"
+                                                ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                                                Arrastra 2 ciudades para crear vuelo (origen → destino)
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Tipo de Vuelo</label>
+                                                <select class="form-control" id="flightTransportType">
+                                                    <!-- Se llena dinámicamente -->
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-warning btn-sm w-100 mt-2"
+                                                onclick="createFlightRoute()">
+                                                <i class="fas fa-plane me-2"></i>Crear Vuelo
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!-- Rutas Marítimas -->
+                                        <div class="maritime-builder mt-3">
+                                            <h6>🚢 Rutas Marítimas</h6>
+                                            <div class="drag-container" id="maritime-routes-container"
+                                                ondrop="dropInRouteBuilder(event, 'maritime')"
+                                                ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                                                Arrastra ciudades para crear ruta marítima
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Tipo de Transporte</label>
+                                                <select class="form-control" id="maritimeTransportType">
+                                                    <!-- Se llena dinámicamente -->
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-info btn-sm w-100 mt-2"
+                                                onclick="createMaritimeRoute()">
+                                                <i class="fas fa-ship me-2"></i>Crear Ruta Marítima
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <!-- Rutas Terrestres -->
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="route-builder">
-                                    <h6>🚗 Rutas Terrestres</h6>
-                                    <div class="drag-container" id="land-routes-container"
-                                        ondrop="dropInRouteBuilder(event, 'land')" ondragover="allowDrop(event)"
-                                        ondragleave="dragLeave(event)">
-                                        Arrastra ciudades aquí para crear ruta terrestre
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label">Tipo de Transporte</label>
-                                        <select class="form-control" id="landTransportType">
-                                            <!-- Se llena dinámicamente -->
-                                        </select>
-                                    </div>
-                                    <button class="btn btn-success btn-sm w-100 mt-2" onclick="createLandRoute()">
-                                        <i class="fas fa-check me-2"></i>Crear Ruta Terrestre
-                                    </button>
-                                </div>
+                    <div class="col-md-4">
+                        <!-- Gestor de Rutas -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-route me-2"></i>Gestión de Rutas
+                                    <span class="tooltip-icon"
+                                        title="Administra las rutas creadas. Puedes eliminar rutas individualmente">i</span>
+                                </h5>
                             </div>
-                            <div class="col-md-4">
-                                <!-- Vuelos -->
-                                <div class="flight-builder mt-3">
-                                    <h6>✈️ Vuelos</h6>
-                                    <div class="drag-container" id="flight-routes-container"
-                                        ondrop="dropInRouteBuilder(event, 'flight')" ondragover="allowDrop(event)"
-                                        ondragleave="dragLeave(event)">
-                                        Arrastra 2 ciudades para crear vuelo (origen → destino)
+                            <div class="card-body">
+                                <!-- Lista de Rutas Terrestres -->
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-road me-2"></i>Rutas Terrestres</h6>
+                                    <div class="routes-list" id="land-routes-list">
+                                        <!-- Se llena dinámicamente -->
                                     </div>
-                                    <div class="mb-2">
-                                        <label class="form-label">Tipo de Vuelo</label>
-                                        <select class="form-control" id="flightTransportType">
-                                            <!-- Se llena dinámicamente -->
-                                        </select>
-                                    </div>
-                                    <button class="btn btn-warning btn-sm w-100 mt-2" onclick="createFlightRoute()">
-                                        <i class="fas fa-plane me-2"></i>Crear Vuelo
-                                    </button>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <!-- Rutas Marítimas -->
-                                <div class="maritime-builder mt-3">
-                                    <h6>🚢 Rutas Marítimas</h6>
-                                    <div class="drag-container" id="maritime-routes-container"
-                                        ondrop="dropInRouteBuilder(event, 'maritime')" ondragover="allowDrop(event)"
-                                        ondragleave="dragLeave(event)">
-                                        Arrastra ciudades para crear ruta marítima
+
+                                <!-- Lista de Vuelos -->
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-plane me-2"></i>Vuelos</h6>
+                                    <div class="routes-list" id="flight-routes-list">
+                                        <!-- Se llena dinámicamente -->
                                     </div>
-                                    <div class="mb-2">
-                                        <label class="form-label">Tipo de Transporte</label>
-                                        <select class="form-control" id="maritimeTransportType">
-                                            <!-- Se llena dinámicamente -->
-                                        </select>
+                                </div>
+
+                                <!-- Lista de Rutas Marítimas -->
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-ship me-2"></i>Rutas Marítimas</h6>
+                                    <div class="routes-list" id="maritime-routes-list">
+                                        <!-- Se llena dinámicamente -->
                                     </div>
-                                    <button class="btn btn-info btn-sm w-100 mt-2" onclick="createMaritimeRoute()">
-                                        <i class="fas fa-ship me-2"></i>Crear Ruta Marítima
+                                </div>
+
+                                <div class="clean-buttons">
+                                    <button class="btn btn-outline-danger" onclick="clearAllRoutes()">
+                                        <i class="fas fa-broom me-2"></i>Limpiar Todas las Rutas
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-
-
-
                     </div>
                 </div>
-
-                <!-- Mapa -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-map me-2"></i>Vista Previa del Mapa</h5>
+                        <h5 class="mb-0"><i class="fas fa-map me-2"></i>Vista Previa del Mapa
+                            <span class="tooltip-icon"
+                                title="El mapa muestra las ciudades y rutas que has creado. Haz clic en los marcadores para más información">i</span>
+                        </h5>
                     </div>
                     <div class="card-body">
                         <div id="previewMap" class="preview-map"></div>
@@ -541,7 +775,10 @@
                 <!-- JSON Output -->
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-code me-2"></i>JSON Generado</h5>
+                        <h5 class="mb-0"><i class="fas fa-code me-2"></i>JSON Generado
+                            <span class="tooltip-icon"
+                                title="Genera el código JSON para usar en tu aplicación. También puedes cargar datos desde JSON existente">i</span>
+                        </h5>
                         <div>
                             <button class="btn btn-success btn-sm me-2" onclick="generateJSON()">
                                 <i class="fas fa-sync me-2"></i>Generar JSON
@@ -683,6 +920,90 @@
         </div>
     </div>
 
+    <!-- Modal de Ayuda -->
+    <div class="modal fade" id="helpModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-question-circle me-2"></i>Ayuda - Generador de Mapas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="help-section">
+                        <h5>¿Cómo usar el Generador de Mapas?</h5>
+                        <p>Esta herramienta te permite crear mapas interactivos con países, ciudades y rutas de
+                            diferentes tipos.</p>
+
+                        <div class="help-step">
+                            <strong>1. Crear Países:</strong> Haz clic en "Agregar País" para definir países con su
+                            bandera y color.
+                        </div>
+                        <div class="help-step">
+                            <strong>2. Crear Ciudades:</strong> Agrega ciudades asignándolas a un país y especificando
+                            sus coordenadas.
+                        </div>
+                        <div class="help-step">
+                            <strong>3. Crear Rutas:</strong> Arrastra ciudades a los contenedores de rutas para crear
+                            conexiones terrestres, aéreas o marítimas.
+                        </div>
+                        <div class="help-step">
+                            <strong>4. Gestionar Rutas:</strong> En la sección "Gestión de Rutas" puedes ver y eliminar
+                            rutas individualmente.
+                        </div>
+                        <div class="help-step">
+                            <strong>5. Personalizar Emojis:</strong> Agrega iconos personalizados para representar
+                            países o tipos de transporte.
+                        </div>
+                        <div class="help-step">
+                            <strong>6. Generar JSON:</strong> Una vez completado tu mapa, genera el código JSON para
+                            usar en tu aplicación.
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h5>Tipos de Rutas</h5>
+                        <div class="help-step">
+                            <strong>Rutas Terrestres:</strong> Conectan múltiples ciudades por tierra. Necesitas al
+                            menos 2 ciudades.
+                        </div>
+                        <div class="help-step">
+                            <strong>Vuelos:</strong> Conectan exactamente 2 ciudades (origen y destino).
+                        </div>
+                        <div class="help-step">
+                            <strong>Rutas Marítimas:</strong> Conectan ciudades por mar. Necesitas al menos 2 ciudades.
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h5>Consejos y Trucos</h5>
+                        <div class="help-step">
+                            <strong>Eliminar rutas individuales:</strong> Usa el botón de eliminar (🗑️) en cada ruta
+                            para quitarla sin afectar las demás.
+                        </div>
+                        <div class="help-step">
+                            <strong>Guardar tu trabajo:</strong> Usa "Guardar Países" para almacenar tus países en el
+                            navegador.
+                        </div>
+                        <div class="help-step">
+                            <strong>Cargar desde JSON:</strong> Si tienes datos en formato JSON, puedes cargarlos
+                            directamente.
+                        </div>
+                        <div class="help-step">
+                            <strong>Coordenadas:</strong> Usa servicios como Google Maps para obtener coordenadas
+                            precisas.
+                        </div>
+                        <div class="help-step">
+                            <strong>Vista previa:</strong> El mapa se actualiza automáticamente mientras trabajas.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- SweetAlert JS -->
@@ -707,6 +1028,48 @@
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
+        }
+
+        // Sistema de ayuda
+        function showHelpModal() {
+            new bootstrap.Modal(document.getElementById('helpModal')).show();
+        }
+
+        // Inicializar tooltips
+        function initTooltips() {
+            // Agregar eventos para mostrar tooltips personalizados
+            document.querySelectorAll('.tooltip-icon').forEach(icon => {
+                icon.addEventListener('mouseenter', function (e) {
+                    const title = this.getAttribute('title');
+                    if (title) {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'help-tooltip top';
+                        tooltip.textContent = title;
+                        document.body.appendChild(tooltip);
+
+                        const rect = this.getBoundingClientRect();
+                        tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+                        tooltip.style.left = (rect.left + rect.width / 2 - tooltip.offsetWidth / 2) + 'px';
+
+                        this._tooltip = tooltip;
+                    }
+                });
+
+                icon.addEventListener('mousemove', function (e) {
+                    if (this._tooltip) {
+                        const rect = this.getBoundingClientRect();
+                        this._tooltip.style.top = (rect.top - this._tooltip.offsetHeight - 10) + 'px';
+                        this._tooltip.style.left = (rect.left + rect.width / 2 - this._tooltip.offsetWidth / 2) + 'px';
+                    }
+                });
+
+                icon.addEventListener('mouseleave', function () {
+                    if (this._tooltip) {
+                        this._tooltip.remove();
+                        this._tooltip = null;
+                    }
+                });
+            });
         }
 
         // Sistema de iconos simplificado para medios de transporte
@@ -749,30 +1112,463 @@
             });
         }
 
-        // Sistema de emojis para banderas de países
         function loadCustomEmojis() {
             const savedEmojis = localStorage.getItem('mapGeneratorCustomEmojis');
             if (savedEmojis) {
                 customEmojis = JSON.parse(savedEmojis);
             } else {
-                // Emojis por defecto para banderas
+                // Emojis por defecto para banderas - LISTA ACTUALIZADA
                 customEmojis = {
-                    'mexico': 'banderas/Mexico.ico',
-                    'españa': 'banderas/Spain.ico',
-                    'francia': 'banderas/France.ico',
-                    'italia': 'banderas/Italy.ico',
-                    'alemania': 'banderas/Germany.ico',
-                    'reino-unido': 'banderas/United-Kingdom.ico',
-                    'usa': 'banderas/United-States.ico',
+                    'abkhazia': 'banderas/Abkhazia.ico',
+                    'afghanistan': 'banderas/Afghanistan.ico',
+                    'aland': 'banderas/Aland.ico',
+                    'albania': 'banderas/Albania.ico',
+                    'algeria': 'banderas/Algeria.ico',
+                    'american-samoa': 'banderas/American-Samoa.ico',
+                    'andorra': 'banderas/Andorra.ico',
+                    'angola': 'banderas/Angola.ico',
+                    'anguilla': 'banderas/Anguilla.ico',
+                    'antarctica': 'banderas/Antarctica.ico',
+                    'antigua-and-barbuda': 'banderas/Antigua-and-Barbuda.ico',
+                    'argentina': 'banderas/Argentina.ico',
+                    'armenia': 'banderas/Armenia.ico',
+                    'aruba': 'banderas/Aruba.ico',
+                    'australia': 'banderas/Australia.ico',
+                    'austria': 'banderas/Austria.ico',
+                    'azerbaijan': 'banderas/Azerbaijan.ico',
+                    'bahamas': 'banderas/Bahamas.ico',
+                    'bahrain': 'banderas/Bahrain.ico',
+                    'bangladesh': 'banderas/Bangladesh.ico',
+                    'barbados': 'banderas/Barbados.ico',
+                    'basque-country': 'banderas/Basque-Country.ico',
+                    'belarus': 'banderas/Belarus.ico',
+                    'belgium': 'banderas/Belgium.ico',
+                    'belize': 'banderas/Belize.ico',
+                    'benin': 'banderas/Benin.ico',
+                    'bermuda': 'banderas/Bermuda.ico',
+                    'bhutan': 'banderas/Bhutan.ico',
+                    'bolivia': 'banderas/Bolivia.ico',
+                    'bosnia-and-herzegovina': 'banderas/Bosnia-and-Herzegovina.ico',
+                    'botswana': 'banderas/Botswana.ico',
+                    'brazil': 'banderas/Brazil.ico',
+                    'british-antarctic-territory': 'banderas/British-Antarctic-Territory.ico',
+                    'british-virgin-islands': 'banderas/British-Virgin-Islands.ico',
+                    'brunei': 'banderas/Brunei.ico',
+                    'bulgaria': 'banderas/Bulgaria.ico',
+                    'burkina-faso': 'banderas/Burkina-Faso.ico',
+                    'burundi': 'banderas/Burundi.ico',
+                    'cambodia': 'banderas/Cambodia.ico',
+                    'cameroon': 'banderas/Cameroon.ico',
                     'canada': 'banderas/Canada.ico',
-                    'japon': 'banderas/Japan.ico',
-                    'china': 'banderas/China.ico'
+                    'canary-islands': 'banderas/Canary-Islands.ico',
+                    'cape-verde': 'banderas/Cape-Verde.ico',
+                    'cayman-islands': 'banderas/Cayman-Islands.ico',
+                    'central-african-republic': 'banderas/Central-African-Republic.ico',
+                    'chad': 'banderas/Chad.ico',
+                    'chile': 'banderas/Chile.ico',
+                    'china': 'banderas/China.ico',
+                    'christmas-island': 'banderas/Christmas-Island.ico',
+                    'cocos-keeling-islands': 'banderas/Cocos-Keeling-Islands.ico',
+                    'colombia': 'banderas/Colombia.ico',
+                    'commonwealth': 'banderas/Commonwealth.ico',
+                    'comoros': 'banderas/Comoros.ico',
+                    'cook-islands': 'banderas/Cook-Islands.ico',
+                    'costa-rica': 'banderas/Costa-Rica.ico',
+                    'cote-divoire': 'banderas/Cote-dIvoire.ico',
+                    'croatia': 'banderas/Croatia.ico',
+                    'cuba': 'banderas/Cuba.ico',
+                    'curacao': 'banderas/Curacao.ico',
+                    'cyprus': 'banderas/Cyprus.ico',
+                    'czech-republic': 'banderas/Czech-Republic.ico',
+                    'democratic-republic-of-the-congo': 'banderas/Democratic-Republic-of-the-Congo.ico',
+                    'denmark': 'banderas/Denmark.ico',
+                    'djibouti': 'banderas/Djibouti.ico',
+                    'dominica': 'banderas/Dominica.ico',
+                    'dominican-republic': 'banderas/Dominican-Republic.ico',
+                    'east-timor': 'banderas/East-Timor.ico',
+                    'ecuador': 'banderas/Ecuador.ico',
+                    'egypt': 'banderas/Egypt.ico',
+                    'el-salvador': 'banderas/El-Salvador.ico',
+                    'england': 'banderas/England.ico',
+                    'equatorial-guinea': 'banderas/Equatorial-Guinea.ico',
+                    'eritrea': 'banderas/Eritrea.ico',
+                    'estonia': 'banderas/Estonia.ico',
+                    'ethiopia': 'banderas/Ethiopia.ico',
+                    'european-union': 'banderas/European-Union.ico',
+                    'falkland-islands': 'banderas/Falkland-Islands.ico',
+                    'faroes': 'banderas/Faroes.ico',
+                    'fiji': 'banderas/Fiji.ico',
+                    'finland': 'banderas/Finland.ico',
+                    'france': 'banderas/France.ico',
+                    'french-polynesia': 'banderas/French-Polynesia.ico',
+                    'french-southern-territories': 'banderas/French-Southern-Territories.ico',
+                    'gabon': 'banderas/Gabon.ico',
+                    'gambia': 'banderas/Gambia.ico',
+                    'georgia': 'banderas/Georgia.ico',
+                    'germany': 'banderas/Germany.ico',
+                    'ghana': 'banderas/Ghana.ico',
+                    'gibraltar': 'banderas/Gibraltar.ico',
+                    'gosquared': 'banderas/GoSquared.ico',
+                    'greece': 'banderas/Greece.ico',
+                    'greenland': 'banderas/Greenland.ico',
+                    'grenada': 'banderas/Grenada.ico',
+                    'guam': 'banderas/Guam.ico',
+                    'guatemala': 'banderas/Guatemala.ico',
+                    'guernsey': 'banderas/Guernsey.ico',
+                    'guinea-bissau': 'banderas/Guinea-Bissau.ico',
+                    'guinea': 'banderas/Guinea.ico',
+                    'guyana': 'banderas/Guyana.ico',
+                    'haiti': 'banderas/Haiti.ico',
+                    'honduras': 'banderas/Honduras.ico',
+                    'hong-kong': 'banderas/Hong-Kong.ico',
+                    'hungary': 'banderas/Hungary.ico',
+                    'iceland': 'banderas/Iceland.ico',
+                    'india': 'banderas/India.ico',
+                    'indonesia': 'banderas/Indonesia.ico',
+                    'iran': 'banderas/Iran.ico',
+                    'iraq': 'banderas/Iraq.ico',
+                    'ireland': 'banderas/Ireland.ico',
+                    'isle-of-man': 'banderas/Isle-of-Man.ico',
+                    'israel': 'banderas/Israel.ico',
+                    'italy': 'banderas/Italy.ico',
+                    'jamaica': 'banderas/Jamaica.ico',
+                    'japan': 'banderas/Japan.ico',
+                    'jersey': 'banderas/Jersey.ico',
+                    'jordan': 'banderas/Jordan.ico',
+                    'kazakhstan': 'banderas/Kazakhstan.ico',
+                    'kenya': 'banderas/Kenya.ico',
+                    'kiribati': 'banderas/Kiribati.ico',
+                    'kosovo': 'banderas/Kosovo.ico',
+                    'kuwait': 'banderas/Kuwait.ico',
+                    'kyrgyzstan': 'banderas/Kyrgyzstan.ico',
+                    'laos': 'banderas/Laos.ico',
+                    'latvia': 'banderas/Latvia.ico',
+                    'lebanon': 'banderas/Lebanon.ico',
+                    'lesotho': 'banderas/Lesotho.ico',
+                    'liberia': 'banderas/Liberia.ico',
+                    'libya': 'banderas/Libya.ico',
+                    'liechtenstein': 'banderas/Liechtenstein.ico',
+                    'lithuania': 'banderas/Lithuania.ico',
+                    'luxembourg': 'banderas/Luxembourg.ico',
+                    'macau': 'banderas/Macau.ico',
+                    'macedonia': 'banderas/Macedonia.ico',
+                    'madagascar': 'banderas/Madagascar.ico',
+                    'malawi': 'banderas/Malawi.ico',
+                    'malaysia': 'banderas/Malaysia.ico',
+                    'maldives': 'banderas/Maldives.ico',
+                    'mali': 'banderas/Mali.ico',
+                    'malta': 'banderas/Malta.ico',
+                    'mars': 'banderas/Mars.ico',
+                    'marshall-islands': 'banderas/Marshall-Islands.ico',
+                    'martinique': 'banderas/Martinique.ico',
+                    'mauritania': 'banderas/Mauritania.ico',
+                    'mauritius': 'banderas/Mauritius.ico',
+                    'mayotte': 'banderas/Mayotte.ico',
+                    'mexico': 'banderas/Mexico.ico',
+                    'micronesia': 'banderas/Micronesia.ico',
+                    'moldova': 'banderas/Moldova.ico',
+                    'monaco': 'banderas/Monaco.ico',
+                    'mongolia': 'banderas/Mongolia.ico',
+                    'montenegro': 'banderas/Montenegro.ico',
+                    'montserrat': 'banderas/Montserrat.ico',
+                    'morocco': 'banderas/Morocco.ico',
+                    'mozambique': 'banderas/Mozambique.ico',
+                    'myanmar': 'banderas/Myanmar.ico',
+                    'nagorno-karabakh': 'banderas/Nagorno-Karabakh.ico',
+                    'namibia': 'banderas/Namibia.ico',
+                    'nato': 'banderas/NATO.ico',
+                    'nauru': 'banderas/Nauru.ico',
+                    'nepal': 'banderas/Nepal.ico',
+                    'netherlands-antilles': 'banderas/Netherlands-Antilles.ico',
+                    'netherlands': 'banderas/Netherlands.ico',
+                    'new-caledonia': 'banderas/New-Caledonia.ico',
+                    'new-zealand': 'banderas/New-Zealand.ico',
+                    'nicaragua': 'banderas/Nicaragua.ico',
+                    'niger': 'banderas/Niger.ico',
+                    'nigeria': 'banderas/Nigeria.ico',
+                    'niue': 'banderas/Niue.ico',
+                    'norfolk-island': 'banderas/Norfolk-Island.ico',
+                    'north-korea': 'banderas/North-Korea.ico',
+                    'northern-cyprus': 'banderas/Northern-Cyprus.ico',
+                    'northern-mariana-islands': 'banderas/Northern-Mariana-Islands.ico',
+                    'norway': 'banderas/Norway.ico',
+                    'olympics': 'banderas/Olympics.ico',
+                    'oman': 'banderas/Oman.ico',
+                    'pakistan': 'banderas/Pakistan.ico',
+                    'palau': 'banderas/Palau.ico',
+                    'palestine': 'banderas/Palestine.ico',
+                    'panama': 'banderas/Panama.ico',
+                    'papua-new-guinea': 'banderas/Papua-New-Guinea.ico',
+                    'paraguay': 'banderas/Paraguay.ico',
+                    'peru': 'banderas/Peru.ico',
+                    'philippines': 'banderas/Philippines.ico',
+                    'pitcairn-islands': 'banderas/Pitcairn-Islands.ico',
+                    'poland': 'banderas/Poland.ico',
+                    'portugal': 'banderas/Portugal.ico',
+                    'puerto-rico': 'banderas/Puerto-Rico.ico',
+                    'qatar': 'banderas/Qatar.ico',
+                    'red-cross': 'banderas/Red-Cross.ico',
+                    'republic-of-the-congo': 'banderas/Republic-of-the-Congo.ico',
+                    'romania': 'banderas/Romania.ico',
+                    'russia': 'banderas/Russia.ico',
+                    'rwanda': 'banderas/Rwanda.ico',
+                    'saint-barthelemy': 'banderas/Saint-Barthelemy.ico',
+                    'saint-helena': 'banderas/Saint-Helena.ico',
+                    'saint-kitts-and-nevis': 'banderas/Saint-Kitts-and-Nevis.ico',
+                    'saint-lucia': 'banderas/Saint-Lucia.ico',
+                    'saint-martin': 'banderas/Saint-Martin.ico',
+                    'saint-vincent-and-the-grenadines': 'banderas/Saint-Vincent-and-the-Grenadines.ico',
+                    'samoa': 'banderas/Samoa.ico',
+                    'san-marino': 'banderas/San-Marino.ico',
+                    'sao-tome-and-principe': 'banderas/Sao-Tome-and-Principe.ico',
+                    'saudi-arabia': 'banderas/Saudi-Arabia.ico',
+                    'scotland': 'banderas/Scotland.ico',
+                    'senegal': 'banderas/Senegal.ico',
+                    'serbia': 'banderas/Serbia.ico',
+                    'seychelles': 'banderas/Seychelles.ico',
+                    'sierra-leone': 'banderas/Sierra-Leone.ico',
+                    'singapore': 'banderas/Singapore.ico',
+                    'slovakia': 'banderas/Slovakia.ico',
+                    'slovenia': 'banderas/Slovenia.ico',
+                    'solomon-islands': 'banderas/Solomon-Islands.ico',
+                    'somalia': 'banderas/Somalia.ico',
+                    'somaliland': 'banderas/Somaliland.ico',
+                    'south-africa': 'banderas/South-Africa.ico',
+                    'south-georgia-and-the-south-sandwich-islands': 'banderas/South-Georgia-and-the-South-Sandwich-Islands.ico',
+                    'south-korea': 'banderas/South-Korea.ico',
+                    'south-ossetia': 'banderas/South-Ossetia.ico',
+                    'south-sudan': 'banderas/South-Sudan.ico',
+                    'spain': 'banderas/Spain.ico',
+                    'sri-lanka': 'banderas/Sri-Lanka.ico',
+                    'sudan': 'banderas/Sudan.ico',
+                    'suriname': 'banderas/Suriname.ico',
+                    'swaziland': 'banderas/Swaziland.ico',
+                    'sweden': 'banderas/Sweden.ico',
+                    'switzerland': 'banderas/Switzerland.ico',
+                    'syria': 'banderas/Syria.ico',
+                    'taiwan': 'banderas/Taiwan.ico',
+                    'tajikistan': 'banderas/Tajikistan.ico',
+                    'tanzania': 'banderas/Tanzania.ico',
+                    'thailand': 'banderas/Thailand.ico',
+                    'togo': 'banderas/Togo.ico',
+                    'tokelau': 'banderas/Tokelau.ico',
+                    'tonga': 'banderas/Tonga.ico',
+                    'trinidad-and-tobago': 'banderas/Trinidad-and-Tobago.ico',
+                    'tunisia': 'banderas/Tunisia.ico',
+                    'turkey': 'banderas/Turkey.ico',
+                    'turkmenistan': 'banderas/Turkmenistan.ico',
+                    'turks-and-caicos-islands': 'banderas/Turks-and-Caicos-Islands.ico',
+                    'tuvalu': 'banderas/Tuvalu.ico',
+                    'uganda': 'banderas/Uganda.ico',
+                    'ukraine': 'banderas/Ukraine.ico',
+                    'united-arab-emirates': 'banderas/United-Arab-Emirates.ico',
+                    'united-kingdom': 'banderas/United-Kingdom.ico',
+                    'united-nations': 'banderas/United-Nations.ico',
+                    'united-states': 'banderas/United-States.ico',
+                    'unknown': 'banderas/Unknown.ico',
+                    'uruguay': 'banderas/Uruguay.ico',
+                    'us-virgin-islands': 'banderas/US-Virgin-Islands.ico',
+                    'uzbekistan': 'banderas/Uzbekistan.ico',
+                    'vanuatu': 'banderas/Vanuatu.ico',
+                    'vatican-city': 'banderas/Vatican-City.ico',
+                    'venezuela': 'banderas/Venezuela.ico',
+                    'vietnam': 'banderas/Vietnam.ico',
+                    'wales': 'banderas/Wales.ico',
+                    'wallis-and-futuna': 'banderas/Wallis-And-Futuna.ico',
+                    'western-sahara': 'banderas/Western-Sahara.ico',
+                    'yemen': 'banderas/Yemen.ico',
+                    'zambia': 'banderas/Zambia.ico',
+                    'zimbabwe': 'banderas/Zimbabwe.ico'
                 };
                 saveCustomEmojis();
             }
             updateEmojiSelectors();
             renderCustomEmojis();
         }
+
+        // Función para buscar emojis por nombre (búsqueda mejorada)
+        function searchEmoji(query) {
+            query = query.toLowerCase().trim();
+            const results = [];
+
+            Object.keys(customEmojis).forEach(key => {
+                if (key.toLowerCase().includes(query)) {
+                    results.push({ key: key, file: customEmojis[key] });
+                }
+            });
+
+            return results;
+        }
+
+        // Actualizar el selector de emojis para mostrar más opciones
+        function updateEmojiSelectors() {
+            const countryEmojiSelector = document.getElementById('countryEmojiSelector');
+            countryEmojiSelector.innerHTML = '';
+
+            // Agregar campo de búsqueda
+            const searchContainer = document.createElement('div');
+            searchContainer.className = 'mb-3';
+            searchContainer.innerHTML = `
+        <input type="text" class="form-control form-control-sm" id="emojiSearch" 
+               placeholder="Buscar bandera...">
+    `;
+            countryEmojiSelector.appendChild(searchContainer);
+
+            // Contenedor para los emojis
+            const emojiGrid = document.createElement('div');
+            emojiGrid.className = 'emoji-grid';
+            emojiGrid.style.display = 'flex';
+            emojiGrid.style.flexWrap = 'wrap';
+            emojiGrid.style.gap = '5px';
+            emojiGrid.style.maxHeight = '200px';
+            emojiGrid.style.overflowY = 'auto';
+            emojiGrid.id = 'emojiGrid';
+
+            // Agregar emojis al grid
+            Object.keys(customEmojis).forEach(name => {
+                const emojiOption = document.createElement('div');
+                emojiOption.className = 'emoji-option';
+                emojiOption.onclick = function () { selectEmoji(this, customEmojis[name], name); };
+                emojiOption.innerHTML = `<img src="${customEmojis[name]}" alt="${name}" class="icon-preview-img" title="${name}">`;
+                emojiOption.dataset.emojiName = name;
+                emojiGrid.appendChild(emojiOption);
+            });
+
+            countryEmojiSelector.appendChild(emojiGrid);
+
+            // Agregar el evento de búsqueda después de crear el elemento
+            document.getElementById('emojiSearch').addEventListener('input', filterEmojis);
+        }
+
+        // Función para filtrar emojis
+        function filterEmojis() {
+            const searchTerm = document.getElementById('emojiSearch').value.toLowerCase();
+            const emojiOptions = document.querySelectorAll('#emojiGrid .emoji-option');
+
+            emojiOptions.forEach(option => {
+                const emojiName = option.dataset.emojiName.toLowerCase();
+                if (emojiName.includes(searchTerm)) {
+                    option.style.display = 'flex';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
+
+        // Función mejorada para agregar emojis personalizados
+        function addCustomEmoji() {
+            const name = document.getElementById('newEmojiName').value.trim().toLowerCase();
+            const file = document.getElementById('newEmojiFile').value.trim();
+
+            if (!name || !file) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor ingresa nombre y archivo del emoji',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Verificar si ya existe
+            if (customEmojis[name]) {
+                Swal.fire({
+                    title: '¿Reemplazar?',
+                    text: `El emoji "${name}" ya existe. ¿Quieres reemplazarlo?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, reemplazar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        customEmojis[name] = file;
+                        saveCustomEmojis();
+                        updateEmojiSelectors();
+                        renderCustomEmojis();
+
+                        document.getElementById('newEmojiName').value = '';
+                        document.getElementById('newEmojiFile').value = '';
+
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: `Emoji "${name}" actualizado correctamente`,
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
+            } else {
+                customEmojis[name] = file;
+                saveCustomEmojis();
+                updateEmojiSelectors();
+                renderCustomEmojis();
+
+                document.getElementById('newEmojiName').value = '';
+                document.getElementById('newEmojiFile').value = '';
+
+                Swal.fire({
+                    title: 'Éxito',
+                    text: `Emoji "${name}" agregado correctamente`,
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        }
+
+        // Función para renderizar emojis personalizados en el gestor
+        function renderCustomEmojis() {
+            const container = document.getElementById('customEmojisContainer');
+            container.innerHTML = '';
+
+            // Agregar campo de búsqueda
+            const searchContainer = document.createElement('div');
+            searchContainer.className = 'mb-3';
+            searchContainer.innerHTML = `
+        <input type="text" class="form-control form-control-sm" id="customEmojiSearch" 
+               placeholder="Buscar emojis personalizados...">
+    `;
+            container.appendChild(searchContainer);
+
+            // Contenedor para emojis
+            const emojiGrid = document.createElement('div');
+            emojiGrid.className = 'emoji-grid';
+            emojiGrid.style.display = 'flex';
+            emojiGrid.style.flexWrap = 'wrap';
+            emojiGrid.style.gap = '5px';
+            emojiGrid.style.maxHeight = '150px';
+            emojiGrid.style.overflowY = 'auto';
+            emojiGrid.id = 'customEmojiGrid';
+
+            Object.keys(customEmojis).forEach(name => {
+                const emojiOption = document.createElement('div');
+                emojiOption.className = 'emoji-option';
+                emojiOption.innerHTML = `
+            <img src="${customEmojis[name]}" alt="${name}" class="icon-preview-img" title="${name}">
+            <div class="emoji-name">${name}</div>
+        `;
+                emojiGrid.appendChild(emojiOption);
+            });
+
+            container.appendChild(emojiGrid);
+
+            // Agregar el evento de búsqueda después de crear el elemento
+            document.getElementById('customEmojiSearch').addEventListener('input', filterCustomEmojis);
+        }
+        // Función para filtrar emojis personalizados
+        function filterCustomEmojis() {
+            const searchTerm = document.getElementById('customEmojiSearch').value.toLowerCase();
+            const emojiOptions = document.querySelectorAll('#customEmojiGrid .emoji-option');
+
+            emojiOptions.forEach(option => {
+                const emojiName = option.querySelector('.emoji-name').textContent.toLowerCase();
+                if (emojiName.includes(searchTerm)) {
+                    option.style.display = 'flex';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
+
 
         function saveCustomEmojis() {
             localStorage.setItem('mapGeneratorCustomEmojis', JSON.stringify(customEmojis));
@@ -838,6 +1634,7 @@
             container.innerHTML = Object.keys(customEmojis).map(name => `
                 <div class="emoji-option" title="${name}">
                     <img src="${customEmojis[name]}" alt="${name}" class="icon-preview-img">
+                    <div class="emoji-name">${name}</div>
                 </div>
             `).join('');
         }
@@ -851,6 +1648,7 @@
                 emojiOption.className = 'emoji-option';
                 emojiOption.onclick = function () { selectEmoji(this, customEmojis[name], name); };
                 emojiOption.innerHTML = `<img src="${customEmojis[name]}" alt="${name}" class="icon-preview-img">`;
+                emojiOption.innerHTML += `<div class="emoji-name">${name}</div>`;
                 emojiOption.dataset.emojiName = name;
                 countryEmojiSelector.appendChild(emojiOption);
             });
@@ -913,7 +1711,6 @@
             updateStatistics();
         }
 
-        // Funciones para rutas con iconos simplificados
         function createLandRoute() {
             if (currentLandRouteCities.length < 2) {
                 Swal.fire({
@@ -928,61 +1725,27 @@
             const coordinates = currentLandRouteCities.map(city => city.coords);
             const cityNames = currentLandRouteCities.map(city => city.name);
             const transportType = document.getElementById('landTransportType').value;
-            const selectedOption = document.getElementById('landTransportType').selectedOptions[0];
-            const transportIcon = selectedOption ? selectedOption.dataset.icon : '';
 
             const route = {
+                id: 'land-route-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
                 type: "land",
                 coordinates: coordinates,
                 transportType: transportType,
-                transportIcon: transportIcon,
                 tooltip: `Ruta terrestre: ${cityNames.join(' → ')}`,
-                index: routeIndexCounter++
+                index: routeIndexCounter++,
+                cityNames: cityNames // CORRECCIÓN: Guardar nombres de ciudades
             };
 
             routes.push(route);
             currentLandRouteCities = [];
             updateLandRouteVisualizer();
             updateMap();
-            saveRoutesToDB(); // Guardar automáticamente
+            updateRoutesList();
+            saveRoutesToDB();
             updateStatistics();
-            renderCities(); // Actualizar visualización de ciudades
-        }
+            renderCities();
 
-        function createFlightRoute() {
-            if (currentFlightCities.length !== 2) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Los vuelos deben tener exactamente 2 ciudades (origen y destino)',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            const [fromCity, toCity] = currentFlightCities;
-            const coordinates = [fromCity.coords, toCity.coords];
-            const transportType = document.getElementById('flightTransportType').value;
-            const selectedOption = document.getElementById('flightTransportType').selectedOptions[0];
-            const transportIcon = selectedOption ? selectedOption.dataset.icon : '';
-
-            const flight = {
-                from: fromCity.name,
-                to: toCity.name,
-                coordinates: coordinates,
-                transportType: transportType,
-                transportIcon: transportIcon,
-                tooltip: `Vuelo: ${fromCity.name} → ${toCity.name}`,
-                index: routeIndexCounter++
-            };
-
-            flights.push(flight);
-            currentFlightCities = [];
-            updateFlightRouteVisualizer();
-            updateMap();
-            saveRoutesToDB(); // Guardar automáticamente
-            updateStatistics();
-            renderCities(); // Actualizar visualización de ciudades
+            console.log('Nueva ruta terrestre creada:', route);
         }
 
         function createMaritimeRoute() {
@@ -999,27 +1762,341 @@
             const coordinates = currentMaritimeRouteCities.map(city => city.coords);
             const cityNames = currentMaritimeRouteCities.map(city => city.name);
             const transportType = document.getElementById('maritimeTransportType').value;
-            const selectedOption = document.getElementById('maritimeTransportType').selectedOptions[0];
-            const transportIcon = selectedOption ? selectedOption.dataset.icon : '';
 
             const maritimeRoute = {
+                id: 'maritime-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
                 type: "maritime",
                 coordinates: coordinates,
                 transportType: transportType,
-                transportIcon: transportIcon,
                 tooltip: `Ruta marítima: ${cityNames.join(' → ')}`,
-                index: routeIndexCounter++
+                index: routeIndexCounter++,
+                cityNames: cityNames // CORRECCIÓN: Guardar nombres de ciudades
             };
 
             maritimeRoutes.push(maritimeRoute);
             currentMaritimeRouteCities = [];
             updateMaritimeRouteVisualizer();
             updateMap();
-            saveRoutesToDB(); // Guardar automáticamente
+            updateRoutesList();
+            saveRoutesToDB();
             updateStatistics();
-            renderCities(); // Actualizar visualización de ciudades
+            renderCities();
+
+            console.log('Nueva ruta marítima creada:', maritimeRoute);
         }
 
+        function createFlightRoute() {
+            if (currentFlightCities.length !== 2) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Los vuelos deben tener exactamente 2 ciudades (origen y destino)',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            const [fromCity, toCity] = currentFlightCities;
+            const coordinates = [fromCity.coords, toCity.coords];
+            const transportType = document.getElementById('flightTransportType').value;
+
+            const flight = {
+                id: 'flight-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                from: fromCity.name,
+                to: toCity.name,
+                coordinates: coordinates,
+                transportType: transportType,
+                tooltip: `Vuelo: ${fromCity.name} → ${toCity.name}`,
+                index: routeIndexCounter++
+            };
+
+            flights.push(flight);
+            currentFlightCities = [];
+            updateFlightRouteVisualizer();
+            updateMap();
+            updateRoutesList();
+            saveRoutesToDB();
+            updateStatistics();
+            renderCities();
+
+            console.log('Nuevo vuelo creado:', flight);
+        }
+
+
+
+
+        function deleteLandRoute(routeId) {
+            console.log('Eliminando ruta terrestre con ID:', routeId);
+            console.log('Rutas antes:', routes);
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres eliminar esta ruta terrestre?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const initialLength = routes.length;
+                    routes = routes.filter(route => route.id === routeId ? false : true);
+
+                    console.log('Rutas después:', routes);
+                    console.log('Eliminadas:', initialLength - routes.length);
+
+                    if (initialLength === routes.length) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar la ruta. El ID no coincide.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        return;
+                    }
+
+                    updateMap();
+                    updateRoutesList();
+                    saveRoutesToDB();
+                    updateStatistics();
+                    renderCities();
+
+                    Swal.fire(
+                        'Eliminada',
+                        'La ruta terrestre ha sido eliminada',
+                        'success'
+                    );
+                }
+            });
+        }
+
+        function deleteFlightRoute(flightId) {
+            console.log('Eliminando vuelo con ID:', flightId);
+            console.log('Vuelos antes:', flights);
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres eliminar este vuelo?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const initialLength = flights.length;
+                    flights = flights.filter(flight => flight.id === flightId ? false : true);
+
+                    console.log('Vuelos después:', flights);
+                    console.log('Eliminados:', initialLength - flights.length);
+
+                    if (initialLength === flights.length) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el vuelo. El ID no coincide.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        return;
+                    }
+
+                    updateMap();
+                    updateRoutesList();
+                    saveRoutesToDB();
+                    updateStatistics();
+                    renderCities();
+
+                    Swal.fire(
+                        'Eliminado',
+                        'El vuelo ha sido eliminado',
+                        'success'
+                    );
+                }
+            });
+        }
+
+        function deleteMaritimeRoute(routeId) {
+            console.log('Eliminando ruta marítima con ID:', routeId);
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres eliminar esta ruta marítima?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const initialLength = maritimeRoutes.length;
+                    maritimeRoutes = maritimeRoutes.filter(route => route.id === routeId ? false : true);
+
+                    console.log('Eliminadas:', initialLength - maritimeRoutes.length);
+
+                    updateMap();
+                    updateRoutesList();
+                    saveRoutesToDB();
+                    updateStatistics();
+                    renderCities();
+
+                    Swal.fire(
+                        'Eliminada',
+                        'La ruta marítima ha sido eliminada',
+                        'success'
+                    );
+                }
+            });
+        }
+
+        // Actualizar listas de rutas - CORREGIDO
+        function updateRoutesList() {
+            console.log('=== ACTUALIZANDO LISTA DE RUTAS ===');
+            console.log('Rutas terrestres:', routes);
+            console.log('Vuelos:', flights);
+            console.log('Rutas marítimas:', maritimeRoutes);
+
+            // Rutas terrestres - CORRECCIÓN: Manejo seguro de IDs y nombres
+            const landRoutesList = document.getElementById('land-routes-list');
+            if (routes.length > 0) {
+                landRoutesList.innerHTML = routes.map(route => {
+                    const displayName = route.cityNames && route.cityNames.length > 0 ?
+                        route.cityNames.join(' → ') : 'Ruta terrestre';
+                    const routeId = route.id || 'sin-id-' + Math.random();
+                    const shortId = route.id ? route.id.substring(0, 10) + '...' : 'Sin ID';
+
+                    return `
+            <div class="route-item land-route">
+                <div class="route-info">
+                    <strong>${displayName}</strong>
+                    <br>
+                    <small>Tipo: ${route.transportType || 'terrestre'}</small>
+                    <br>
+                    <small class="text-muted">ID: ${shortId}</small>
+                </div>
+                <div class="route-actions">
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteLandRoute('${routeId}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            `;
+                }).join('');
+            } else {
+                landRoutesList.innerHTML = '<p class="text-muted text-center">No hay rutas terrestres</p>';
+            }
+
+            // Vuelos - CORRECCIÓN: Manejo seguro de IDs
+            const flightRoutesList = document.getElementById('flight-routes-list');
+            if (flights.length > 0) {
+                flightRoutesList.innerHTML = flights.map(flight => {
+                    const flightId = flight.id || 'sin-id-' + Math.random();
+                    const shortId = flight.id ? flight.id.substring(0, 10) + '...' : 'Sin ID';
+
+                    return `
+            <div class="route-item flight-route">
+                <div class="route-info">
+                    <strong>${flight.from} → ${flight.to}</strong>
+                    <br>
+                    <small>Tipo: ${flight.transportType || 'aereo'}</small>
+                    <br>
+                    <small class="text-muted">ID: ${shortId}</small>
+                </div>
+                <div class="route-actions">
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteFlightRoute('${flightId}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            `;
+                }).join('');
+            } else {
+                flightRoutesList.innerHTML = '<p class="text-muted text-center">No hay vuelos</p>';
+            }
+
+            // Rutas marítimas - CORRECCIÓN: Manejo seguro de IDs y nombres
+            const maritimeRoutesList = document.getElementById('maritime-routes-list');
+            if (maritimeRoutes.length > 0) {
+                maritimeRoutesList.innerHTML = maritimeRoutes.map(route => {
+                    const displayName = route.cityNames && route.cityNames.length > 0 ?
+                        route.cityNames.join(' → ') : 'Ruta marítima';
+                    const routeId = route.id || 'sin-id-' + Math.random();
+                    const shortId = route.id ? route.id.substring(0, 10) + '...' : 'Sin ID';
+
+                    return `
+            <div class="route-item maritime-route">
+                <div class="route-info">
+                    <strong>${displayName}</strong>
+                    <br>
+                    <small>Tipo: ${route.transportType || 'maritimo'}</small>
+                    <br>
+                    <small class="text-muted">ID: ${shortId}</small>
+                </div>
+                <div class="route-actions">
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteMaritimeRoute('${routeId}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            `;
+                }).join('');
+            } else {
+                maritimeRoutesList.innerHTML = '<p class="text-muted text-center">No hay rutas marítimas</p>';
+            }
+        }
+        function addFixButton() {
+            const routeManagementCard = document.querySelector('.card .card-body');
+
+            // Verificar si los botones ya existen
+            if (document.getElementById('fixRoutesBtn')) return;
+
+            const fixButton = document.createElement('button');
+            fixButton.id = 'fixRoutesBtn';
+            fixButton.className = 'btn btn-warning btn-sm w-100 mt-2';
+            fixButton.innerHTML = '<i class="fas fa-tools me-2"></i>Corregir Rutas Actuales';
+            fixButton.onclick = function () {
+                Swal.fire({
+                    title: '¿Corregir rutas?',
+                    text: 'Esto intentará corregir las rutas existentes. ¿Quieres continuar?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, corregir',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        migrateExistingRoutes();
+                    }
+                });
+            };
+
+            const resetButton = document.createElement('button');
+            resetButton.id = 'resetRoutesBtn';
+            resetButton.className = 'btn btn-danger btn-sm w-100 mt-2';
+            resetButton.innerHTML = '<i class="fas fa-broom me-2"></i>Reiniciar Todas las Rutas';
+            resetButton.onclick = function () {
+                Swal.fire({
+                    title: '¿Reiniciar todo?',
+                    text: 'Esto eliminará TODAS las rutas existentes. ¿Estás seguro?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, reiniciar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        resetAndFixRoutes();
+                    }
+                });
+            };
+
+            routeManagementCard.appendChild(fixButton);
+            routeManagementCard.appendChild(resetButton);
+        }
         // Renderizado de países con emojis
         function renderCountries() {
             const container = document.getElementById('countries-container');
@@ -1517,86 +2594,139 @@
             document.getElementById('citiesCount').textContent = cities.length;
             document.getElementById('routesCount').textContent = routes.length + flights.length + maritimeRoutes.length;
         }
+        function migrateExistingRoutes() {
+            console.log('Migrando rutas existentes...');
+
+            let needsMigration = false;
+
+            // Migrar rutas terrestres
+            const migratedLandRoutes = routes.map(route => {
+                let needsUpdate = false;
+                const updatedRoute = { ...route };
+
+                // CORRECCIÓN: Si no tiene ID, generar uno
+                if (!route.id || route.id.includes('sin-id')) {
+                    updatedRoute.id = 'land-route-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                    needsUpdate = true;
+                    needsMigration = true;
+                }
+
+                // CORRECCIÓN: Si no tiene cityNames, intentar obtenerlos
+                if (!route.cityNames || route.cityNames.length === 0) {
+                    let cityNames = [];
+
+                    // Intentar extraer del tooltip
+                    if (route.tooltip && route.tooltip.includes('→')) {
+                        const tooltipText = route.tooltip.replace('Ruta terrestre: ', '');
+                        cityNames = tooltipText.split(' → ');
+                    }
+                    // Buscar por coordenadas
+                    else if (route.coordinates) {
+                        route.coordinates.forEach(coord => {
+                            const city = cities.find(c =>
+                                Math.abs(c.coords[0] - coord[0]) < 0.001 &&
+                                Math.abs(c.coords[1] - coord[1]) < 0.001
+                            );
+                            if (city) {
+                                cityNames.push(city.name);
+                            }
+                        });
+                    }
+
+                    // Si se encontraron nombres, actualizar
+                    if (cityNames.length > 0) {
+                        updatedRoute.cityNames = cityNames;
+                        needsUpdate = true;
+                        needsMigration = true;
+                    }
+                }
+
+                return needsUpdate ? updatedRoute : route;
+            });
+
+            // Migrar vuelos
+            const migratedFlights = flights.map(flight => {
+                if (!flight.id || flight.id.includes('sin-id')) {
+                    needsMigration = true;
+                    return {
+                        ...flight,
+                        id: 'flight-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)
+                    };
+                }
+                return flight;
+            });
+
+            // Migrar rutas marítimas
+            const migratedMaritimeRoutes = maritimeRoutes.map(route => {
+                let needsUpdate = false;
+                const updatedRoute = { ...route };
+
+                if (!route.id || route.id.includes('sin-id')) {
+                    updatedRoute.id = 'maritime-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                    needsUpdate = true;
+                    needsMigration = true;
+                }
+
+                if (!route.cityNames || route.cityNames.length === 0) {
+                    let cityNames = [];
+
+                    if (route.tooltip && route.tooltip.includes('→')) {
+                        const tooltipText = route.tooltip.replace('Ruta marítima: ', '');
+                        cityNames = tooltipText.split(' → ');
+                    }
+                    else if (route.coordinates) {
+                        route.coordinates.forEach(coord => {
+                            const city = cities.find(c =>
+                                Math.abs(c.coords[0] - coord[0]) < 0.001 &&
+                                Math.abs(c.coords[1] - coord[1]) < 0.001
+                            );
+                            if (city) {
+                                cityNames.push(city.name);
+                            }
+                        });
+                    }
+
+                    if (cityNames.length > 0) {
+                        updatedRoute.cityNames = cityNames;
+                        needsUpdate = true;
+                        needsMigration = true;
+                    }
+                }
+
+                return needsUpdate ? updatedRoute : route;
+            });
+
+            if (needsMigration) {
+                routes = migratedLandRoutes;
+                flights = migratedFlights;
+                maritimeRoutes = migratedMaritimeRoutes;
+
+                saveRoutesToDB();
+                updateRoutesList();
+
+                console.log('Migración completada:', {
+                    rutasTerrestres: routes.length,
+                    vuelos: flights.length,
+                    rutasMaritimas: maritimeRoutes.length
+                });
+
+                Swal.fire({
+                    title: 'Migración Completada',
+                    text: 'Las rutas existentes han sido corregidas.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Sin Cambios',
+                    text: 'No se encontraron rutas que necesiten corrección.',
+                    icon: 'info',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        }
 
         // Funciones para limpiar rutas
-        function clearLandRoutes() {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Estás seguro de que quieres eliminar todas las rutas terrestres?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    routes = [];
-                    updateMap();
-                    saveRoutesToDB();
-                    updateStatistics();
-                    renderCities();
-                    Swal.fire(
-                        'Eliminadas',
-                        'Rutas terrestres eliminadas',
-                        'success'
-                    );
-                }
-            });
-        }
-
-        function clearFlightRoutes() {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Estás seguro de que quieres eliminar todos los vuelos?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    flights = [];
-                    updateMap();
-                    saveRoutesToDB();
-                    updateStatistics();
-                    renderCities();
-                    Swal.fire(
-                        'Eliminados',
-                        'Vuelos eliminados',
-                        'success'
-                    );
-                }
-            });
-        }
-
-        function clearMaritimeRoutes() {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Estás seguro de que quieres eliminar todas las rutas marítimas?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    maritimeRoutes = [];
-                    updateMap();
-                    saveRoutesToDB();
-                    updateStatistics();
-                    renderCities();
-                    Swal.fire(
-                        'Eliminadas',
-                        'Rutas marítimas eliminadas',
-                        'success'
-                    );
-                }
-            });
-        }
-
         function clearAllRoutes() {
             Swal.fire({
                 title: '¿Estás seguro?',
@@ -1614,6 +2744,7 @@
                     maritimeRoutes = [];
                     routeIndexCounter = 1;
                     updateMap();
+                    updateRoutesList();
                     saveRoutesToDB();
                     updateStatistics();
                     renderCities();
@@ -1679,6 +2810,48 @@
 
             document.getElementById('jsonOutput').textContent = JSON.stringify(finalJSON, null, 2);
         }
+        function resetAndFixRoutes() {
+            console.log('Reiniciando y corrigiendo todas las rutas...');
+
+            // Limpiar todas las rutas existentes
+            routes = [];
+            flights = [];
+            maritimeRoutes = [];
+
+            // Limpiar localStorage
+            localStorage.removeItem('mapGeneratorRoutes');
+
+            // Actualizar la interfaz
+            updateMap();
+            updateRoutesList();
+            updateStatistics();
+            renderCities();
+
+            Swal.fire({
+                title: 'Rutas Reiniciadas',
+                text: 'Todas las rutas han sido limpiadas. Ahora puedes crear nuevas rutas que funcionarán correctamente.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        function copyToClipboard() {
+            const jsonOutput = document.getElementById('jsonOutput');
+            navigator.clipboard.writeText(jsonOutput.textContent).then(() => {
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'JSON copiado al portapapeles!',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
+            });
+        }
+        // CORREGIR: Eliminar la función duplicada deleteLandRoute y arreglar el cierre de llaves
+
+        // Busca esta línea (alrededor de la línea 1800) y ELIMÍNALA:
+
+
+        // Y reemplaza todo desde esa línea hasta el final del script con esto:
 
         function copyToClipboard() {
             const jsonOutput = document.getElementById('jsonOutput');
@@ -1703,7 +2876,12 @@
                 const data = JSON.parse(jsonInput);
 
                 // Limpiar datos actuales
-                clearAllData();
+                countries = {};
+                cities = [];
+                routes = [];
+                flights = [];
+                maritimeRoutes = [];
+                routeIndexCounter = 1;
 
                 // Cargar configuración
                 if (data.config) {
@@ -1727,13 +2905,87 @@
                     }));
                 }
 
-                // Cargar rutas
-                if (data.routes) routes = data.routes;
-                if (data.flights) flights = data.flights;
-                if (data.maritimeRoutes) maritimeRoutes = data.maritimeRoutes;
+                // Cargar rutas terrestres - CORRECCIÓN: Extraer nombres de ciudades del tooltip
+                if (data.routes) {
+                    routes = data.routes.map(route => {
+                        let cityNames = [];
+
+                        // Intentar extraer nombres del tooltip
+                        if (route.tooltip && route.tooltip.includes('→')) {
+                            const tooltipText = route.tooltip.replace('Ruta terrestre: ', '');
+                            cityNames = tooltipText.split(' → ');
+                        }
+                        // Si no hay tooltip, buscar ciudades por coordenadas
+                        else if (route.coordinates) {
+                            route.coordinates.forEach(coord => {
+                                const city = cities.find(c =>
+                                    Math.abs(c.coords[0] - coord[0]) < 0.001 &&
+                                    Math.abs(c.coords[1] - coord[1]) < 0.001
+                                );
+                                if (city) {
+                                    cityNames.push(city.name);
+                                }
+                            });
+                        }
+
+                        // Si no se encontraron nombres, usar genérico
+                        if (cityNames.length === 0) {
+                            cityNames = ['Ruta terrestre'];
+                        }
+
+                        return {
+                            ...route,
+                            id: route.id || 'land-route-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                            cityNames: cityNames
+                        };
+                    });
+                }
+
+                // Cargar vuelos
+                if (data.flights) {
+                    flights = data.flights.map(flight => ({
+                        ...flight,
+                        id: flight.id || 'flight-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)
+                    }));
+                }
+
+                // Cargar rutas marítimas
+                if (data.maritimeRoutes) {
+                    maritimeRoutes = data.maritimeRoutes.map(route => {
+                        let cityNames = [];
+
+                        // Intentar extraer nombres del tooltip
+                        if (route.tooltip && route.tooltip.includes('→')) {
+                            const tooltipText = route.tooltip.replace('Ruta marítima: ', '');
+                            cityNames = tooltipText.split(' → ');
+                        }
+                        // Si no hay tooltip, buscar ciudades por coordenadas
+                        else if (route.coordinates) {
+                            route.coordinates.forEach(coord => {
+                                const city = cities.find(c =>
+                                    Math.abs(c.coords[0] - coord[0]) < 0.001 &&
+                                    Math.abs(c.coords[1] - coord[1]) < 0.001
+                                );
+                                if (city) {
+                                    cityNames.push(city.name);
+                                }
+                            });
+                        }
+
+                        // Si no se encontraron nombres, usar genérico
+                        if (cityNames.length === 0) {
+                            cityNames = ['Ruta marítima'];
+                        }
+
+                        return {
+                            ...route,
+                            id: route.id || 'maritime-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                            cityNames: cityNames
+                        };
+                    });
+                }
 
                 // Actualizar contador de índices
-                routeIndexCounter = 1;
                 const allRoutes = [...routes, ...flights, ...maritimeRoutes];
                 allRoutes.forEach(route => {
                     if (route.index && route.index >= routeIndexCounter) {
@@ -1745,6 +2997,7 @@
                 renderCountries();
                 renderCities();
                 updateMap();
+                updateRoutesList();
                 updateStatistics();
 
                 bootstrap.Modal.getInstance(document.getElementById('jsonModal')).hide();
@@ -1839,6 +3092,7 @@
                     updateFlightRouteVisualizer();
                     updateMaritimeRouteVisualizer();
                     updateMap();
+                    updateRoutesList();
                     updateStatistics();
 
                     document.getElementById('jsonOutput').textContent = '// El JSON se generará aquí...';
@@ -1902,6 +3156,7 @@
                 });
 
                 updateMap();
+                updateRoutesList();
                 updateStatistics();
                 renderCities();
             }
@@ -1916,6 +3171,10 @@
             loadCitiesFromDB();
             loadRoutesFromDB();
             updateStatistics();
+            updateRoutesList();
+            initTooltips();
+            updateEmojiSelectors();
+
         });
     </script>
 </body>
