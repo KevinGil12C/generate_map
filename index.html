@@ -4014,29 +4014,7 @@ Espero su respuesta. ¡Gracias!`;
             });
         }
 
-        // Mostrar botón de scroll cuando se hace scroll
-        window.addEventListener('scroll', function () {
-            const scrollButton = document.querySelector('.scroll-to-top');
-            if (window.scrollY > 300) {
-                scrollButton.style.display = 'flex';
-            } else {
-                scrollButton.style.display = 'none';
-            }
-        });
 
-        // Verificar si ya se aceptaron términos y cookies
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!localStorage.getItem('termsAccepted')) {
-                setTimeout(() => {
-                    $('#termsModal').modal('show');
-                }, 2000);
-            }
-
-            if (!localStorage.getItem('cookiesAccepted')) {
-                setTimeout(() => {
-                    $('#cookiesModal').modal('show');
-                }, 3000);
-            }
 
             // Permitir enviar formulario con Enter
             document.getElementById('contactForm').addEventListener('keypress', function (e) {
@@ -4044,7 +4022,6 @@ Espero su respuesta. ¡Gracias!`;
                     e.preventDefault();
                     sendToWhatsApp();
                 }
-            });
         });
     </script>
 </body>
