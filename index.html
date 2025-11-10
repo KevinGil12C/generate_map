@@ -564,6 +564,7 @@
             align-items: center;
             justify-content: center;
         }
+
         .editable {
             cursor: pointer;
             transition: background-color 0.2s;
@@ -700,6 +701,49 @@
             margin-left: 3px;
             font-size: 0.7rem;
             line-height: 1;
+        }
+
+        /* Nuevos estilos para la funcionalidad de edición */
+        .editable-field {
+            cursor: pointer;
+            border-bottom: 1px dashed #6c757d;
+            transition: all 0.2s ease;
+        }
+
+        .editable-field:hover {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #0d6efd;
+        }
+
+        .editing {
+            background-color: #fff3cd !important;
+            border: 1px solid #ffc107 !important;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .edit-btn {
+            position: absolute;
+            top: 8px;
+            right: 35px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .edit-btn:hover {
+            opacity: 1;
+        }
+
+        .save-btn,
+        .cancel-btn {
+            font-size: 0.7rem;
+            padding: 2px 6px;
         }
     </style>
 </head>
@@ -2385,19 +2429,44 @@
         }
 
         // Funciones para países con emojis
-        function showCountryModal() {
-            document.getElementById('countryId').value = '';
-            document.getElementById('countryName').value = '';
-            document.getElementById('countryColor').value = '#4a6fa5';
+        function showCountryModal(countryId = null) {
+            const isEdit = countryId !== null;
 
-            // Limpiar selecciones
-            document.querySelectorAll('.emoji-option.selected').forEach(el => {
-                el.classList.remove('selected');
-            });
+            if (isEdit) {
+                const country = countries[countryId];
+                document.getElementById('countryId').value = countryId;
+                document.getElementById('countryName').value = country.name;
+                document.getElementById('countryColor').value = country.color;
+
+                // Seleccionar el emoji correspondiente
+                document.querySelectorAll('#countryEmojiSelector .emoji-option').forEach(emoji => {
+                    if (emoji.dataset.selectedEmojiName === country.emojiName) {
+                        emoji.classList.add('selected');
+                    } else {
+                        emoji.classList.remove('selected');
+                    }
+                });
+
+                document.querySelector('#countryModal .modal-title').textContent = 'Editar País';
+                document.querySelector('#countryModal .btn-primary').textContent = 'Guardar Cambios';
+                document.querySelector('#countryModal .btn-primary').onclick = () => updateCountry(countryId);
+            } else {
+                document.getElementById('countryId').value = '';
+                document.getElementById('countryName').value = '';
+                document.getElementById('countryColor').value = '#4a6fa5';
+
+                // Limpiar selecciones
+                document.querySelectorAll('#countryEmojiSelector .emoji-option.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+
+                document.querySelector('#countryModal .modal-title').textContent = 'Nuevo País';
+                document.querySelector('#countryModal .btn-primary').textContent = 'Agregar';
+                document.querySelector('#countryModal .btn-primary').onclick = addCountry;
+            }
 
             new bootstrap.Modal(document.getElementById('countryModal')).show();
         }
-
         function addCountry() {
             const id = document.getElementById('countryId').value;
             const name = document.getElementById('countryName').value;
@@ -2831,13 +2900,230 @@
                 <div class="draggable-item" draggable="true" ondragstart="dragStart(event, 'country', '${key}')" ondragend="dragEnd(event)">
                     ${emojiHtml}
                     <span class="color-badge" style="background-color: ${country.color}"></span>
-                    <strong>${country.name}</strong>
-                    <br><small>ID: ${key}</small>
+                    <div class="d-inline-block">
+                        <strong class="editable-field" onclick="editCountryField('${key}', 'name')">${country.name}</strong>
+                        <br><small class="editable-field" onclick="editCountryField('${key}', 'id')">ID: ${key}</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary edit-btn" onclick="showCountryModal('${key}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
                     <button class="btn btn-sm btn-outline-danger delete-btn" onclick="deleteCountry('${key}')">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             `}).join('');
+        }
+        function editCountryField(countryId, field) {
+            const country = countries[countryId];
+            if (!country) return;
+
+            const container = document.getElementById('countries-container');
+            const countryElement = container.querySelector(`[draggable="true"]:has(strong:contains("${country.name}"))`);
+
+            if (!countryElement) return;
+
+            let currentValue, displayElement, fieldName;
+
+            if (field === 'name') {
+                currentValue = country.name;
+                displayElement = countryElement.querySelector('strong');
+                fieldName = 'nombre';
+            } else if (field === 'id') {
+                currentValue = countryId;
+                displayElement = countryElement.querySelector('small');
+                fieldName = 'ID';
+            } else {
+                return;
+            }
+
+            // Crear campo de edición
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentValue;
+            input.className = 'form-control form-control-sm d-inline-block w-auto';
+
+            // Crear botones de guardar y cancelar
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'edit-buttons';
+
+            const saveButton = document.createElement('button');
+            saveButton.className = 'btn btn-success btn-sm save-btn';
+            saveButton.innerHTML = '<i class="fas fa-check"></i>';
+            saveButton.onclick = () => saveCountryField(countryId, field, input.value);
+
+            const cancelButton = document.createElement('button');
+            cancelButton.className = 'btn btn-secondary btn-sm cancel-btn';
+            cancelButton.innerHTML = '<i class="fas fa-times"></i>';
+            cancelButton.onclick = () => cancelEditCountry(countryElement, displayElement, currentValue);
+
+            buttonContainer.appendChild(saveButton);
+            buttonContainer.appendChild(cancelButton);
+
+            // Reemplazar el contenido
+            displayElement.innerHTML = '';
+            displayElement.appendChild(input);
+            displayElement.appendChild(buttonContainer);
+            displayElement.classList.add('editing');
+
+            // Enfocar el campo
+            input.focus();
+
+            // Permitir guardar con Enter
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveCountryField(countryId, field, input.value);
+                }
+            });
+        }
+
+        function saveCountryField(countryId, field, newValue) {
+            if (!newValue.trim()) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'El campo no puede estar vacío',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            if (field === 'name') {
+                countries[countryId].name = newValue;
+            } else if (field === 'id') {
+                // Cambiar el ID requiere crear una nueva entrada y eliminar la anterior
+                if (newValue !== countryId) {
+                    if (countries[newValue]) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Ya existe un país con ese ID',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        return;
+                    }
+
+                    countries[newValue] = countries[countryId];
+                    delete countries[countryId];
+
+                    // Actualizar ciudades que usan este país
+                    cities.forEach(city => {
+                        if (city.type === countryId) {
+                            city.type = newValue;
+                        }
+                    });
+
+                    countryId = newValue;
+                }
+            }
+
+            renderCountries();
+            renderCities();
+            updateMap();
+            saveCountriesToDB();
+            saveCitiesToDB();
+
+            Swal.fire({
+                title: 'Éxito',
+                text: 'País actualizado correctamente',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        function cancelEditCountry(countryElement, displayElement, originalValue) {
+            displayElement.innerHTML = originalValue;
+            displayElement.classList.remove('editing');
+        }
+
+        // Funciones de edición para ciudades
+        function editCityField(cityId, field) {
+            const city = cities.find(c => c.id === cityId);
+            if (!city) return;
+
+            const container = document.getElementById('cities-container');
+            const cityElement = container.querySelector(`[draggable="true"]:has(strong:contains("${city.name}"))`);
+
+            if (!cityElement) return;
+
+            let currentValue, displayElement, fieldName;
+
+            if (field === 'name') {
+                currentValue = city.name;
+                displayElement = cityElement.querySelector('strong');
+                fieldName = 'nombre';
+            } else if (field === 'description') {
+                currentValue = city.description || '';
+                displayElement = cityElement.querySelector('small:first-of-type');
+                fieldName = 'descripción';
+            } else {
+                return;
+            }
+
+            // Crear campo de edición
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentValue;
+            input.className = 'form-control form-control-sm d-inline-block w-auto';
+
+            // Crear botones de guardar y cancelar
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'edit-buttons';
+
+            const saveButton = document.createElement('button');
+            saveButton.className = 'btn btn-success btn-sm save-btn';
+            saveButton.innerHTML = '<i class="fas fa-check"></i>';
+            saveButton.onclick = () => saveCityField(cityId, field, input.value);
+
+            const cancelButton = document.createElement('button');
+            cancelButton.className = 'btn btn-secondary btn-sm cancel-btn';
+            cancelButton.innerHTML = '<i class="fas fa-times"></i>';
+            cancelButton.onclick = () => cancelEditCity(cityElement, displayElement, currentValue);
+
+            buttonContainer.appendChild(saveButton);
+            buttonContainer.appendChild(cancelButton);
+
+            // Reemplazar el contenido
+            displayElement.innerHTML = '';
+            displayElement.appendChild(input);
+            displayElement.appendChild(buttonContainer);
+            displayElement.classList.add('editing');
+
+            // Enfocar el campo
+            input.focus();
+
+            // Permitir guardar con Enter
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveCityField(cityId, field, input.value);
+                }
+            });
+        }
+
+        function saveCityField(cityId, field, newValue) {
+            const city = cities.find(c => c.id === cityId);
+            if (!city) return;
+
+            if (field === 'name') {
+                city.name = newValue;
+            } else if (field === 'description') {
+                city.description = newValue;
+            }
+
+            renderCities();
+            updateMap();
+            saveCitiesToDB();
+
+            Swal.fire({
+                title: 'Éxito',
+                text: 'Ciudad actualizada correctamente',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        function cancelEditCity(cityElement, displayElement, originalValue) {
+            displayElement.innerHTML = originalValue;
+            displayElement.classList.remove('editing');
         }
 
         // Funciones Drag & Drop
@@ -2986,16 +3272,155 @@
             updateMaritimeRouteVisualizer();
         }
 
-        // Funciones de ciudades
-        function showCityModal() {
-            updateCountrySelect();
-            document.getElementById('cityName').value = '';
-            document.getElementById('cityDescription').value = '';
-            document.getElementById('cityLat').value = '';
-            document.getElementById('cityLng').value = '';
-            new bootstrap.Modal(document.getElementById('cityModal')).show();
+        // Funciones de ciudades}
+        function updateCountry(countryId) {
+            const id = document.getElementById('countryId').value;
+            const name = document.getElementById('countryName').value;
+            const color = document.getElementById('countryColor').value;
+
+            // Obtener emoji seleccionado
+            const selectedEmoji = document.querySelector('#countryEmojiSelector .emoji-option.selected');
+            const emojiFile = selectedEmoji ? selectedEmoji.dataset.selectedEmoji : '';
+            const emojiName = selectedEmoji ? selectedEmoji.dataset.selectedEmojiName : '';
+
+            if (!id || !name) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor completa todos los campos',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Si cambió el ID, crear nueva entrada y eliminar la anterior
+            if (id !== countryId) {
+                if (countries[id]) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Ya existe un país con ese ID',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
+                countries[id] = {
+                    name: name,
+                    emoji: emojiFile,
+                    emojiName: emojiName,
+                    buttonText: name.substring(0, 10),
+                    layerText: name,
+                    color: color
+                };
+
+                delete countries[countryId];
+
+                // Actualizar ciudades que usan este país
+                cities.forEach(city => {
+                    if (city.type === countryId) {
+                        city.type = id;
+                    }
+                });
+            } else {
+                // Actualizar el país existente
+                countries[countryId] = {
+                    name: name,
+                    emoji: emojiFile,
+                    emojiName: emojiName,
+                    buttonText: name.substring(0, 10),
+                    layerText: name,
+                    color: color
+                };
+            }
+
+            renderCountries();
+            renderCities();
+            updateMap();
+            saveCountriesToDB();
+            saveCitiesToDB();
+            bootstrap.Modal.getInstance(document.getElementById('countryModal')).hide();
+            updateStatistics();
+
+            Swal.fire({
+                title: 'Éxito',
+                text: 'País actualizado correctamente',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
         }
 
+        function showCityModal(cityId = null) {
+            const isEdit = cityId !== null;
+
+            updateCountrySelect();
+
+            if (isEdit) {
+                const city = cities.find(c => c.id === cityId);
+                document.getElementById('cityName').value = city.name;
+                document.getElementById('cityCountry').value = city.type;
+                document.getElementById('cityDescription').value = city.description || '';
+                document.getElementById('cityLat').value = city.coords[0];
+                document.getElementById('cityLng').value = city.coords[1];
+
+                document.querySelector('#cityModal .modal-title').textContent = 'Editar Ciudad';
+                document.querySelector('#cityModal .btn-primary').textContent = 'Guardar Cambios';
+                document.querySelector('#cityModal .btn-primary').onclick = () => updateCity(cityId);
+            } else {
+                document.getElementById('cityName').value = '';
+                document.getElementById('cityDescription').value = '';
+                document.getElementById('cityLat').value = '';
+                document.getElementById('cityLng').value = '';
+
+                document.querySelector('#cityModal .modal-title').textContent = 'Nueva Ciudad';
+                document.querySelector('#cityModal .btn-primary').textContent = 'Agregar Ciudad';
+                document.querySelector('#cityModal .btn-primary').onclick = addCity;
+            }
+
+            new bootstrap.Modal(document.getElementById('cityModal')).show();
+        }
+        function updateCity(cityId) {
+            const name = document.getElementById('cityName').value;
+            const countryId = document.getElementById('cityCountry').value;
+            const description = document.getElementById('cityDescription').value;
+            const lat = parseFloat(document.getElementById('cityLat').value);
+            const lng = parseFloat(document.getElementById('cityLng').value);
+
+            if (!name || !countryId || isNaN(lat) || isNaN(lng)) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor completa todos los campos correctamente',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            const cityIndex = cities.findIndex(c => c.id === cityId);
+            if (cityIndex !== -1) {
+                cities[cityIndex] = {
+                    id: cityId,
+                    name: name,
+                    country: countries[countryId]?.name || countryId,
+                    coords: [lat, lng],
+                    type: countryId,
+                    description: description
+                };
+            }
+
+            renderCities();
+            updateMap();
+            saveCitiesToDB();
+            bootstrap.Modal.getInstance(document.getElementById('cityModal')).hide();
+            updateStatistics();
+
+            Swal.fire({
+                title: 'Éxito',
+                text: 'Ciudad actualizada correctamente',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
+        }
         function updateCountrySelect() {
             const select = document.getElementById('cityCountry');
             select.innerHTML = Object.keys(countries).map(key =>
@@ -3046,17 +3471,25 @@
 
                 return `
                 <div class="draggable-item ${cityClass}" draggable="true" ondragstart="dragStart(event, 'city', '${city.id}')" ondragend="dragEnd(event)">
-                    <strong>${city.name}</strong>
-                    <span class="badge" style="background-color: ${getCountryColor(city.type)}">${getCountryEmoji(city.type)}</span>
-                    <br>
-                    <small>${city.coords[0].toFixed(4)}, ${city.coords[1].toFixed(4)}</small>
-                    ${isInRoute ? '<span class="badge bg-success ms-2">En ruta</span>' : ''}
+                    <div class="d-inline-block">
+                        <strong class="editable-field" onclick="editCityField('${city.id}', 'name')">${city.name}</strong>
+                        <span class="badge" style="background-color: ${getCountryColor(city.type)}">${getCountryEmoji(city.type)}</span>
+                        <br>
+                        <small class="editable-field" onclick="editCityField('${city.id}', 'description')">${city.description || 'Sin descripción'}</small>
+                        <br>
+                        <small>${city.coords[0].toFixed(4)}, ${city.coords[1].toFixed(4)}</small>
+                        ${isInRoute ? '<span class="badge bg-success ms-2">En ruta</span>' : ''}
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary edit-btn" onclick="showCityModal('${city.id}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
                     <button class="btn btn-sm btn-outline-danger delete-btn" onclick="deleteCity('${city.id}')">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             `}).join('');
         }
+
 
         // Función para verificar si una ciudad está en alguna ruta
         function isCityInAnyRoute(city) {
@@ -4016,12 +4449,12 @@ Espero su respuesta. ¡Gracias!`;
 
 
 
-            // Permitir enviar formulario con Enter
-            document.getElementById('contactForm').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    sendToWhatsApp();
-                }
+        // Permitir enviar formulario con Enter
+        document.getElementById('contactForm').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendToWhatsApp();
+            }
         });
     </script>
 </body>
