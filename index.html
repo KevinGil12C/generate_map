@@ -218,7 +218,7 @@
             flex-wrap: wrap;
             gap: 5px;
             margin-top: 10px;
-            max-height: 100px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
@@ -1665,7 +1665,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="submitContactForm()">Enviar Mensaje</button>
+                    <button type="button" class="btn btn-primary" onclick="sendToWhatsApp()">Enviar Mensaje</button>
                 </div>
             </div>
         </div>
@@ -1841,9 +1841,9 @@
         function loadCustomIcons() {
             // Solo 3 iconos para los tipos de ruta
             const transportIcons = {
-                'terrestre': 'iconos/autobus.png',
-                'aereo': 'iconos/vuelo.png',
-                'maritimo': 'iconos/barco.png'
+                'terrestre': 'icons/destiny/autobus.png',
+                'aereo': 'icons/destiny/vuelo.png',
+                'maritimo': 'icons/destiny/barco.png'
             };
 
             updateTransportSelectors(transportIcons);
